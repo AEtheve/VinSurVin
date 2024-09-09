@@ -8,13 +8,11 @@ import json
 def create_user(request):
     if request.method == 'POST':
         try:
-            username = request.GET.get("username")
-            print(username)
-            email = request.GET.get("email")
-            print(email)
-            password = request.GET.get("password")
-            print(password)
-            
+            data = json.loads(request.body)
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
+
             if not all([username, email, password]):
                 return JsonResponse({'error': 'Tous les champs sont requis'})
             
