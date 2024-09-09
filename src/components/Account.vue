@@ -1,6 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 const cartOpen = ref(false);
+const registerFormMessage = ref("");
+const registerFormError = ref("");
+
+onMounted(() => {
+  document.getElementById("formRegister").addEventListener("submit", function(event){
+    event.preventDefault();
+
+    fetch("http://localhost:8000/user/new", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: event.target.email.value,
+        password: event.target.password.value,
+        username: event.target.email.value
+    })})
+    .then(response => response.json())
+    .then(data => {
+      if(data.error){
+        registerFormError.value = data.error;
+      }else{
+        registerFormMessage.value = data.message;
+      }
+    })
+  });
+});
 </script>
 
 <template>
@@ -13,7 +40,7 @@ const cartOpen = ref(false);
     ">
       <div>
         <div id="form_account">
-          <form>
+          <form >
             <h2>Connectez-vous</h2>
             Vous avez déjà un compte sur VinSurVin ?
             <input type="email" name="email" placeholder="Adresse email" />
@@ -21,10 +48,14 @@ const cartOpen = ref(false);
             <input type="submit" value="Se connecter" />
           </form>
 
-          <form>
+          <form id="formRegister" method="POST">
             <h2>Nouveau client ?</h2>
             <input type="email" name="email" placeholder="Adresse email" />
+            <input type="password" name="password" placeholder="Mot de passe" />
             <input type="submit" value="Poursuivre l'inscription"/>
+
+            <p v-if="registerFormMessage != ''">{{ registerFormMessage }}</p>
+            <p v-if="registerFormError != ''">{{ registerFormError }}</p>
           </form>
         </div>
       </div>
