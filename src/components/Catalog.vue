@@ -34,18 +34,6 @@ const products = [
   <div  style="padding-left: 3%;">
     <button class="filter-button"><i class="fa-solid fa-sliders"></i>Trier et filtrer</button>
     <div  style="display: inline-flex; gap: 25px;">
-      <!-- <div>
-        <div id="product-box">
-          <div class="product_card"></div>
-          <div style="display: inline-flex; flex-direction: column; text-align: center;">
-            <span style="font-weight: 600; font-size: 1.2rem;">Vins exquis de la région</span>
-            <div class="product-price"><span class="promo">20,00€</span> <span class="promo-pourcent">-5%</span></div>
-            <div class="promo-price">19,00€</div>
-            <div><button>Ajouter au panier</button></div>
-
-          </div>
-        </div>
-      </div> -->
       <ProductBox v-for="product in products" :product="product" />
     </div>
   </div>
@@ -60,6 +48,7 @@ const products = [
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   left: 0;
+  margin-top: 5px ;
 }
 
 #cart_content {

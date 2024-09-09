@@ -17,7 +17,7 @@ function focusSearch() {
 		btnSearch.style.display = 'none';
 
 		inputSearch.addEventListener('blur', () => {
-			isSearchActive.value = false; // Hide the icon when search is not active
+			isSearchActive.value = false; 
 			btnSearch.style.display = 'inline-block';
 		});
 	}
@@ -162,12 +162,12 @@ li {
 
 .search-icon {
 	position: absolute;
-	right: 10px; /* Adjust as needed */
+	right: 10px; 
 	top: 50%;
 	transform: translateY(-50%);
 	width: 24px;
 	height: 24px;
-	fill: black; /* Adjust icon color */
+	fill: black; 
 }
 
 .ul-header-mobile {
