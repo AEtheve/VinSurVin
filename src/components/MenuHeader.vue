@@ -1,18 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { inject } from 'vue';
 import logo from '../assets/logo.png';
 const cartOpen = inject("cartOpen");
+
+const isSearchActive = ref(false);
 
 function focusSearch() {
 	const inputSearch = document.getElementById("input-search");
 	const btnSearch = document.getElementById("btn-search");
 
 	if (inputSearch) {
+		isSearchActive.value = true; 
 		inputSearch.style.display = 'block';
 		inputSearch.focus();
 		btnSearch.style.display = 'none';
 
 		inputSearch.addEventListener('blur', () => {
+			isSearchActive.value = false; 
 			btnSearch.style.display = 'inline-block';
 		});
 	}
@@ -23,14 +28,13 @@ function focusSearch() {
 	<div id="promo-border">Profitez de réductions exceptionnelles sur nos vins!</div>
 	<ul class="ul-header-mobile">
 		<div :style="{ backgroundImage: `url(${logo})` }"
-			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px;     background-size: 110px;">
+			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 		</div>
 		<span><i class="fa-solid fa-bars"></i></span>
-
 	</ul>
 	<ul class="ul-header">
 		<div :style="{ backgroundImage: `url(${logo})` }"
-			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px;     background-size: 110px;">
+			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 		</div>
 		<div style="
 	          display: inline-flex;
@@ -43,8 +47,21 @@ function focusSearch() {
 			<li>
 				<router-link to="/boutique" :class="{ active: $route.path === '/boutique' }">Boutique</router-link>
 			</li>
-			<li @click="focusSearch"> <span id="btn-search">Rechercher</span>
+			<li @click="focusSearch" class="search-container">
+				<span id="btn-search">Rechercher</span>
 				<input type="text" id="input-search" />
+				<svg v-if="isSearchActive" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="search-icon">
+					<g clip-path="url(#clip0_15_152)">
+						<rect width="24" height="24" fill="white"></rect>
+						<circle cx="10.5" cy="10.5" r="6.5" fill="white" stroke="#000000" stroke-linejoin="round"></circle>
+						<path d="M19.6464 20.3536C19.8417 20.5488 20.1583 20.5488 20.3536 20.3536C20.5488 20.1583 20.5488 19.8417 20.3536 19.6464L19.6464 20.3536ZM20.3536 19.6464L15.3536 14.6464L14.6464 15.3536L19.6464 20.3536L20.3536 19.6464Z" fill="#000000"></path>
+					</g>
+					<defs>
+						<clipPath id="clip0_15_152">
+							<rect width="24" height="24" fill="white"></rect>
+						</clipPath>
+					</defs>
+				</svg>
 			</li>
 			<li>
 				<router-link to="/account" :class="{ active: $route.path === '/account' }">Se connecter /
@@ -78,6 +95,7 @@ function focusSearch() {
 		</div>
 	</ul>
 </template>
+
 <style scoped>
 ul {
 	display: flex;
@@ -97,13 +115,13 @@ ul {
 li {
 	height: 20px;
 	cursor: pointer;
+	position: relative;
 }
 
 .active {
 	text-decoration: underline;
 	text-underline-offset: 0.5em;
 }
-
 
 #promo-border {
 	height: 40px;
@@ -138,18 +156,30 @@ li {
 	transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
 }
 
+.search-container {
+	position: relative;
+}
+
+.search-icon {
+	position: absolute;
+	right: 10px; 
+	top: 50%;
+	transform: translateY(-50%);
+	width: 24px;
+	height: 24px;
+	fill: black; 
+}
+
 .ul-header-mobile {
 	display: none;
 	font-size: 2rem;
-
 }
-
 
 @media (max-width: 1091px) {
 	.ul-header {
     display: none;
   }
-  .ul-header-mobile{
+  .ul-header-mobile {
 	display: flex;
 	justify-content: space-between;
 	width: 90%;
