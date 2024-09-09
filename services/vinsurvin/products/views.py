@@ -22,7 +22,10 @@ def add_product(request):
         for field in fields:
             value = request.GET.get(field)
             if value is not None and value != "":
-                product_data[field] = value
+                if field == "price" or field == "stock":
+                    product_data[field] = int(value)
+                else:
+                    product_data[field] = value
         
         if not product_data:
             return JsonResponse({"error": "No valid data provided"}, status=400)
