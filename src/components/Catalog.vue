@@ -8,13 +8,19 @@ const fetchProducts = async () => {
   const response = await fetch('http://localhost:8000/products/');
   const data = await response.json();
 
-  data.forEach((product) => {
-    console.log(product);
+  data.forEach((productData) => {
+    const product = productData.fields;
     products.value.push({
       name: product.name,
       price: product.price,
       promo: product.promo,
       image: product.image,
+      cepage: product.cepage,
+      region: product.region,
+      millesime: product.millesime,
+      appelation: product.appelation,
+      type: product.type
+
     });
   });
 };
