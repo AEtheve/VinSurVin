@@ -4,18 +4,10 @@ import { defineProps } from 'vue';
 
 defineProps<{
   product: {
-    id: number;
     name: string;
     price: number;
     promo: number;
     image: string;
-    description: string;
-
-    cepage?: string;
-    region?: string;
-    millesime?: number;
-    appellation?: string;
-    type?: string;
   };
 }>();
 
@@ -35,21 +27,7 @@ function decrement() {
 <template>
   <div>
     <div id="product-box">
- <a :href="'/product/' + product.id">
-  <div class="product_card" :style="{ backgroundImage: 'url(' + product.image + ')' }">
-    <div class="overlay">
-      <div class="description">
-        <p v-if="product.cepage"><strong>Cépage:</strong> {{ product.cepage }}</p>
-        <p v-if="product.region"><strong>Région:</strong> {{ product.region }}</p>
-        <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
-        <p v-if="product.appellation"><strong>Appellation:</strong> {{ product.appellation }}</p>
-        <p v-if="product.type"><strong>Type:</strong> {{ product.type }}</p>
-      </div>
-    </div>
-  </div>
-</a>
-
-
+      <div class="product_card" :style="{ backgroundImage: `url(${product.image})` }"></div>
       <div class="price-box">
         <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>
         <div v-if="product.promo > 0" class="product-price">
@@ -61,7 +39,7 @@ function decrement() {
             <input class="quantity_input" :value="quantity" readonly />
             <button class="quantity_button" @click="increment">+</button>
           </div>
-          <button class="cart_button">Ajouter au panier</button>
+            <button class="cart_button">Ajouter au panier</button>
         </div>
         <div v-else class="product-price">{{ product.price.toFixed(2).replace('.', ',') }}€
           <div class="quantity-product-button">
@@ -86,48 +64,12 @@ function decrement() {
 }
 
 .product_card {
-  position: relative; /* Position relative pour que l'overlay soit correctement positionné */
   background-size: cover;
   background-position: center;
   height: 360px;
   width: 240px;
   margin: 0px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.product_card:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.8); 
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.product_card:hover .overlay {
-  opacity: 1;
-}
-
-.description {
-  font-size: 0.9rem;
-  text-align: left;
-  color: black;
-  padding: 20px;
-  justify-content:  center;
-}
-
 
 .quantity-product-button {
   display: inline-flex;
@@ -186,7 +128,7 @@ button:hover {
   flex-direction: column;
   text-align: center;
   height: 131px;
-  margin-top: 15px;
+  margin-top: 5px;
   justify-content: space-around;
 }
 </style>
