@@ -1,61 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import ProductBox from './ProductBox.vu
-const products = [
-  {
-    id: 1,
-    name: 'Vins Rouge',
-    price: 20,
-    promo: 10,
-    description: 'Vin rouge de qualité, La cuvée La Germine du domaine Duclaux utilise les deux cépages de l\'appellation. Tout d\'abord la Syrah à 97%. Ce raisin aux petites baies d\'un noir légèrement bleuté est inscrit dans le patrimoine des Côtes du Rhône tellement il se plait dans la région. La Syrah permet la production de vins fruités et tanniques qui ravissent les papilles des amateurs de vins rouges. Le viognier vient compléter la Syrah pour attendrir ses tanins et confère au vin la finesse légendaire des vins de l\'AOC Côtes Rôties.',
-    image: '/images/Rouge.jpg',
-    cepage: 'Syrah, Viognier',
-    region: 'Rhône',
-    millesime: 2018,
-    appellation: 'Côtes Rôties',
-    type: 'Rouge'
-  },
-  {
-    id: 2,
-    name: 'Vins Blanc',
-    price: 20,
-    promo: -1,
-    description: 'Vin blanc de qualité, produit à partir de raisins de Chardonnay soigneusement sélectionnés.',
-    image: '/images/Blanc.jpg',
-    cepage: 'Chardonnay',
-    region: 'Bourgogne',
-    millesime: 2020,
-    appellation: 'Chablis',
-    type: 'Blanc'
-  },
-  {
-    id: 3,
-    name: 'Vins Rosé',
-    price: 30,
-    promo: -1,
-    description: 'Vin rosé de qualité, caractérisé par des arômes fruités et une fraîcheur exceptionnelle.',
-    image: '/images/Rosé.jpg',
-    cepage: 'Grenache, Cinsault',
-    region: 'Provence',
-    millesime: 2021,
-    appellation: 'Côtes de Provence',
-    type: 'Rosé'
-  },
-  {
-    id: 4,
-    name: 'Champagne',
-    price: 40,
-    promo: -1,
-    description: 'Champagne de qualité, élaboré selon la méthode traditionnelle champenoise.',
-    image: '/images/Champagne.jpg',
-    cepage: 'Pinot Noir, Chardonnay, Pinot Meunier',
-    region: 'Champagne',
-    millesime: 2012,
-    appellation: 'Champagne',
-    type: 'Effervescent'
-  },
-];
-=======
+import ProductBox from './ProductBox.vue'
+
 const products = ref([]);
 
 const fetchProducts = async () => {
@@ -83,12 +29,6 @@ fetchProducts();
     <div  style="display: inline-flex; gap: 25px;">
       <ProductBox v-for="product in products" :product="product" />
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-      <img src="../assets/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 200px; object-fit: scale-down;">
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-      @Vin/20 Corporation
-    </div>"
   </div>
 </template>
 
