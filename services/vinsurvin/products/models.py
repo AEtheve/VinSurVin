@@ -4,10 +4,10 @@ from django.core.exceptions import ValidationError
 
 class Product(djongo_models.Model):
     name = models.CharField(max_length=50, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    promo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    price = models.FloatField(null=True)
+    promo = models.FloatField(blank=True, null=True)
     description = models.TextField(null=True)
-    image = models.URLField(null=True)
+    image = models.CharField(max_length=255, null=True)
     stock = models.IntegerField(null=True)
     type = models.CharField(max_length=50, null=True)
     domain = models.CharField(max_length=50, blank=True, null=True)
