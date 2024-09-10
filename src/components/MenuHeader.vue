@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { inject } from 'vue';
+import logo from '../assets/logo.png';
 const cartOpen = inject("cartOpen");
 
 const isSearchActive = ref(false);
@@ -26,12 +27,14 @@ function focusSearch() {
 <template>
 	<div id="promo-border">Profitez de réductions exceptionnelles sur nos vins!</div>
 	<ul class="ul-header-mobile">
-		<div style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+		<div :style="{ backgroundImage: `url(${logo})` }"
+			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 		</div>
 		<span><i class="fa-solid fa-bars"></i></span>
 	</ul>
 	<ul class="ul-header">
-		<div style="background-image: url('/images/logo.png');  width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+		<div :style="{ backgroundImage: `url(${logo})` }"
+			style="width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 		</div>
 		<div style="
 	          display: inline-flex;
