@@ -1,6 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-const cartOpen = ref(false);
+import { ref, onMounted } from 'vue';
+const registerFormMessage = ref("");
+const registerFormError = ref("");
+const loginFormMessage = ref("");
+const loginFormError = ref("");
+
+onMounted(() => {
+  document.getElementById("formRegister").addEventListener("submit", function(event){
+    event.preventDefault();
+
+    fetch("http://localhost:8000/user/new", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: event.target.email.value,
+        password: event.target.password.value,
+        username: event.target.email.value
+    })})
+    .then(response => response.json())
+    .then(data => {
+      if(data.error){
+        registerFormError.value = data.error;
+      }else{
+        registerFormMessage.value = data.message;
+      }
+    })
+  });
+
+  document.getElementById("formLogin").addEventListener("submit", function(event){
+    event.preventDefault();
+
+    fetch("http://localhost:8000/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: event.target.email.value,
+        password: event.target.password.value
+    })})
+    .then(response => response.json())
+    .then(data => {
+      if(data.error){
+        loginFormError.value = data.error;
+      }else{
+        loginFormMessage.value = data.message;
+        console.log(data);
+      }
+    })
+  });
+
+  
+});
 </script>
 
 <template>
@@ -13,18 +66,25 @@ const cartOpen = ref(false);
     ">
       <div>
         <div id="form_account">
-          <form>
+          <form id="formLogin" method="POST">
             <h2>Connectez-vous</h2>
             Vous avez déjà un compte sur VinSurVin ?
             <input type="email" name="email" placeholder="Adresse email" />
             <input type="password" name="password" placeholder="Mot de passe" />
             <input type="submit" value="Se connecter" />
+
+            <p v-if="loginFormMessage != ''">{{ loginFormMessage }}</p>
+            <p v-if="loginFormError != ''">{{ loginFormError }}</p>
           </form>
 
-          <form>
+          <form id="formRegister" method="POST">
             <h2>Nouveau client ?</h2>
             <input type="email" name="email" placeholder="Adresse email" />
+            <input type="password" name="password" placeholder="Mot de passe" />
             <input type="submit" value="Poursuivre l'inscription"/>
+
+            <p v-if="registerFormMessage != ''">{{ registerFormMessage }}</p>
+            <p v-if="registerFormError != ''">{{ registerFormError }}</p>
           </form>
         </div>
       </div>

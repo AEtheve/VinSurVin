@@ -21,6 +21,7 @@ from products import views as product_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/new', user_views.create_user, name='create_user'),
+    path('user/login', user_views.login, name='login'),
     path('products/', product_views.get_products, name='get_products'),
     path('products/new', product_views.add_product, name='add_product')
 ]
