@@ -97,6 +97,12 @@ onMounted(() => {
 
       </div>
     </div>
+    <div style="text-align: center; margin-top: 20px;">
+      <img src="../assets/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 200px; object-fit: scale-down;">
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+      @Vin/20 Corporation
+    </div>"
   </div>
 </template>
 
