@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ProductBox from './ProductBox.vue'
-
+import { ref } from 'vue'
+import ProductBox from './ProductBox.vu
 const products = [
   {
     id: 1,
@@ -55,7 +55,25 @@ const products = [
     type: 'Effervescent'
   },
 ];
+=======
+const products = ref([]);
 
+const fetchProducts = async () => {
+  const response = await fetch('http://localhost:8000/products/');
+  const data = await response.json();
+
+  data.forEach((product) => {
+    console.log(product);
+    products.value.push({
+      name: product.name,
+      price: product.price,
+      promo: product.promo,
+      image: product.image,
+    });
+  });
+};
+
+fetchProducts();
 
 </script>
 
