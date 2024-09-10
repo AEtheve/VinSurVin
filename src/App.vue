@@ -10,6 +10,7 @@ provide('cartOpen', cartOpen);
   <router-view name="Home" />
   <router-view name="Catalog" />
   <router-view name="Account" />
+  <router-view name="Product" />
 
   <div id="cart_box" v-if="cartOpen">
       <div id="cart_content">

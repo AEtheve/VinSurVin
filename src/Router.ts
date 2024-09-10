@@ -3,6 +3,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import MenuHeader from './components/MenuHeader.vue'
 import Home from './components/Home.vue'
 import Catalog from './components/Catalog.vue'
+import Product from './components/Product.vue'
 import Account from './components/Account.vue'
 
 const router = createRouter({
@@ -34,6 +35,16 @@ const router = createRouter({
                 Account
             },
         },
+
+
+        {
+            path: '/Product/:id',
+            components:
+            {
+                default: MenuHeader,
+                Product
+            },
+        }
 
 
 
