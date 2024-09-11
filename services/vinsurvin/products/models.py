@@ -12,9 +12,9 @@ class Product(djongo_models.Model):
     promo = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     producer = models.CharField(max_length=50, blank=True, null=True)
-    grape_variety = models.CharField(max_length=50, blank=True, null=True)
+    grape_variety = models.CharField(max_length=255, blank=True, null=True)
     region = models.CharField(max_length=50, blank=True, null=True)
-    appellation = models.CharField(max_length=50, blank=True, null=True)
+    appelation = models.CharField(max_length=50, blank=True, null=True)
     
 
     objects = djongo_models.DjongoManager()
