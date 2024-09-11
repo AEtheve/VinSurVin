@@ -33,7 +33,7 @@ fetchProducts();
 <template>
   <div style="padding-left: 3%;">
     <button class="filter-button"><i class="fa-solid fa-sliders"></i>Trier et filtrer</button>
-    <div style="display: inline-flex; gap: 25px;">
+    <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px;">
       <ProductBox v-for="product in products" :product="product" />
     </div>
     <LowerPage />
