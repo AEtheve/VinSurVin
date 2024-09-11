@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref,inject, onMounted } from 'vue';
 
 const props = defineProps<{
   product: {
