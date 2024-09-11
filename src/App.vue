@@ -13,6 +13,11 @@ function computeSubtotal() {
   });
   return subtotal;
 }
+
+function removeProductFromCart(id) {
+  const index = productsInCard.value.findIndex((product) => product.id === id);
+  productsInCard.value.splice(index, 1);
+}
 </script>
 
 <template>
@@ -21,7 +26,7 @@ function computeSubtotal() {
   <router-view name="Catalog" />
   <router-view name="Account" />
   <router-view name="Product" />
-
+  <router-view name="CartProcess" />
 
   <div id="cart_box" v-if="cartOpen">
     <div id="cart_content">
@@ -44,12 +49,15 @@ function computeSubtotal() {
               <div>x1</div>
               <div>{{ product.price.toFixed(2).replace('.', ',') }} €</div>
             </div>
-            <div style="font-size: 1.1rem; color: rgb(23, 23, 80);">Supprimer</div>
+            <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;"
+              @click="removeProductFromCart(product.id)"
+            >Supprimer</div>
           </div>
         </div>
       </div>
 
       <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
+      <router-link to="/cartprocess"><button id="validate-cart" >Valider mon panier</button></router-link>
     </div>
   </div>
 </template>
@@ -91,5 +99,15 @@ function computeSubtotal() {
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
+}
+
+button {
+  padding: 15px;
+  margin: 20px;
+  background: black;
+  color: white;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
 }
 </style>
