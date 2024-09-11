@@ -71,6 +71,8 @@ function removeProductFromCart(id) {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   left: 0;
+  z-index: 1001;
+  top: 0%;
 }
 
 #cart_content {
