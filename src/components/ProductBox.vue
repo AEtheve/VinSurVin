@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, defineProps  } from 'vue';
+import { defineProps, ref, onMounted } from 'vue';
 
 const props = defineProps<{
   product: {
@@ -13,7 +13,7 @@ const props = defineProps<{
     cepage?: string;
     region?: string;
     millesime?: number;
-    appellation?: string;
+    appelation?: string;
     type?: string;
   };
 }>();
@@ -45,6 +45,7 @@ function addToCart() {
 }
 </script>
 
+
 <template>
   <div>
     <div id="product-box">
@@ -52,11 +53,12 @@ function addToCart() {
         <div class="product_card" :style="{ backgroundImage: 'url(' + product.image + ')' }">
           <div class="overlay">
             <div class="description">
-              <p v-if="product.cepage"><strong>Cépage:</strong> {{ product.cepage }}</p>
-              <p v-if="product.region"><strong>Région:</strong> {{ product.region }}</p>
-              <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
-              <p v-if="product.appellation"><strong>Appellation:</strong> {{ product.appellation }}</p>
               <p v-if="product.type"><strong>Type:</strong> {{ product.type }}</p>
+              <p><strong>Appelation:</strong> {{ product.appelation ? product.appelation : 'Non spécifiée' }}</p>
+              <p><strong>Région:</strong> {{ product.region ? product.region : 'Non spécifiée' }}</p>
+              <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
+              <p><strong>Cépage:</strong> {{ product.cepage ? product.cepage : 'Non spécifié' }}</p>
+              
             </div>
           </div>
         </div>
@@ -97,7 +99,7 @@ function addToCart() {
 }
 
 .product_card {
-  position: relative; 
+  position: relative;
   background-size: cover;
   background-position: center;
   height: 360px;
@@ -118,7 +120,7 @@ function addToCart() {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.8); 
+  background-color: rgba(255, 255, 255, 0.8);
   opacity: 0;
   transition: opacity 0.3s ease;
   display: flex;
@@ -136,7 +138,7 @@ function addToCart() {
   text-align: left;
   color: black;
   padding: 20px;
-  justify-content:  center;
+  justify-content: center;
 }
 
 .quantity-product-button {
