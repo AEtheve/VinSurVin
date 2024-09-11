@@ -19,8 +19,7 @@ const fetchProducts = async () => {
       region: product.region,
       millesime: product.millesime,
       appelation: product.appelation,
-      type: product.type
-
+      type: product.type,
     });
   });
 };

@@ -1,5 +1,23 @@
 @ -1,46 +0,0 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
+
+defineProps<{
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    promo: number;
+    image: string;
+    description: string;
+
+    cepage?: string;
+    region?: string;
+    millesime?: number;
+    appellation?: string;
+    type?: string;
+  };
+}>();
 
 
 </script>
