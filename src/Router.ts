@@ -5,6 +5,7 @@ import Home from './components/Home.vue'
 import Catalog from './components/Catalog.vue'
 import Product from './components/Product.vue'
 import Account from './components/Account.vue'
+import CartProcess from './components/CartProcess.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -35,7 +36,6 @@ const router = createRouter({
                 Account
             },
         },
-
         {
             path: '/Product/:id',
             components:
@@ -43,12 +43,15 @@ const router = createRouter({
                 default: MenuHeader,
                 Product
             },
+        },
+        {
+            path: '/cartprocess',
+            components:
+            {
+                default: MenuHeader,
+                CartProcess
+            },
         }
-
-
-
-
-
     ],
 });
 export default router;

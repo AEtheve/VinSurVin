@@ -1,7 +1,4 @@
-@ -1,46 +0,0 @@
 <script setup lang="ts">
-
-
 </script>
 
 <template>
