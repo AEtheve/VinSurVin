@@ -32,7 +32,7 @@ function computeSubtotal() {
           <div style="display: inline-flex; flex-direction: column; padding: 1px; gap: 8px;">
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
             <div style="font-size: 1.2rem; display: inline-flex; gap: 60px;">
-              <div>Quantité 1</div>
+              <div>Quantité : {{product.quantity}}</div>
               <div>{{ product.price.toFixed(2).replace('.', ',') }} €</div>
             </div>
             <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;">Supprimer</div>
