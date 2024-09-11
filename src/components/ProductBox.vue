@@ -195,6 +195,8 @@ button:hover {
 .promo {
   text-decoration: line-through;
   font-weight: 400;
+  color: #d32f2f;
+  margin: 5px;
 }
 
 .price-box {

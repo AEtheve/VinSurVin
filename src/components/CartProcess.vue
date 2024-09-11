@@ -62,16 +62,7 @@ function computeSubtotal() {
 </template>
 
 <style scoped>
-#cart_box {
-  font-size: 1.4rem;
-  color: black;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  left: 0;
-  margin-top: 5px;
-}
+
 
 #cart_content {
   position: fixed;
@@ -82,9 +73,6 @@ function computeSubtotal() {
   height: 100%;
 }
 
-#close_cart {
-  text-align: right;
-}
 
 .filter-button {
   background: #e9e9e9;

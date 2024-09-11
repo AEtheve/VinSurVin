@@ -86,9 +86,6 @@ function removeProductFromCart(id) {
   text-align: center;
 }
 
-#close_cart {
-  text-align: right;
-}
 
 #promo-border {
   height: 40px;
