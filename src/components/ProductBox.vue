@@ -64,25 +64,24 @@ function addToCart() {
         </div>
       </a>
       <div class="price-box">
-        <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>
-        <div v-if="product.promo > 0" class="product-price">
-          <span class="promo">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
-          <span class="promo-pourcent">-{{ product.promo }}%</span>
-          <div class="promo-price">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
-          <div class="quantity-product-button">
-            <button class="quantity_button" @click="decrement">-</button>
-            <input class="quantity_input" :value="quantity" readonly />
-            <button class="quantity_button" @click="increment">+</button>
-          </div>
-          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
-        </div>
-        <div v-else class="product-price">{{ product.price.toFixed(2).replace('.', ',') }}€
-          <div class="quantity-product-button">
-            <button class="quantity_button" @click="decrement">-</button>
-            <input class="quantity_input" :value="quantity" readonly />
-            <button class="quantity_button" @click="increment">+</button>
-          </div>
-          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
+    <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>   
+        <div class="product-price">
+            <div class="promo-details">
+                <div v-if="product.promo > 0">
+                    <span class="promo">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
+                    <span class="promo-pourcent">-{{ product.promo }}%</span>
+                    <div class="promo-price">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
+                </div>
+                <div v-else>
+                    <span>{{ product.price.toFixed(2).replace('.', ',') }}€</span>
+                </div>
+            </div>
+            <div class="quantity-product-button">
+                <button class="quantity_button" @click="decrement">-</button>
+                <input class="quantity_input" :value="quantity" readonly />
+                <button class="quantity_button" @click="increment">+</button>
+            </div>
+            <button class="cart_button" @click="addToCart">Ajouter au panier</button>
         </div>
       </div>
     </div>
@@ -114,6 +113,10 @@ function addToCart() {
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+.promo-details {
+    min-height: 50px; 
+    margin-bottom: 10px;
+}
 .overlay {
   position: absolute;
   top: 0;

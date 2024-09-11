@@ -51,7 +51,12 @@ const router = createRouter({
                 default: MenuHeader,
                 CartProcess
             },
-        }
+        },
+        { 
+            path: '/boutique', 
+            name: 'Catalog', 
+            component: Catalog 
+        },
     ],
 });
 export default router;
