@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+
+// raw data
 const product = ref({
   id: 1,
   name: "Vin Rouge",

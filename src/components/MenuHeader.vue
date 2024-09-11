@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { inject } from 'vue';
 const cartOpen = inject("cartOpen");
+const productsInCard = inject('productsInCard');
 
 const isSearchActive = ref(false);
 
@@ -21,6 +22,7 @@ function focusSearch() {
 		});
 	}
 }
+
 </script>
 
 <template>
@@ -86,7 +88,7 @@ function focusSearch() {
 							9.47359 14.9239 9.08752V6.75728H17.2816V21.2039C17.2816 21.976 16.6557 22.6019
 							15.8836 22.6019H3.4758C2.70368 22.6019 2.07775 21.976 2.07775 21.2039V6.75728Z" fill="currentColor"
 							data-v-12eef732=""></path>
-					</svg> (0)
+					</svg> ({{ productsInCard.length }})
 				</div>
 			</li>
 		</div>
