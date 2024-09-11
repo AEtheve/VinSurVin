@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { defineProps } from 'vue';
+import { defineProps, ref, onMounted } from 'vue';
 
 const props = defineProps<{
   product: {
@@ -19,6 +18,8 @@ const props = defineProps<{
   };
 }>();
 
+const productsInCard = inject('productsInCard');
+
 const quantity = ref(1);
 
 function increment() {
@@ -31,9 +32,17 @@ function decrement() {
   }
 }
 
-onMounted(() => {
-  console.log('Product Object:', props.product);
-});
+function addToCart() {
+  productsInCard.value.push({
+    id: props.product.id,
+    name: props.product.name,
+    price: props.product.price,
+    promo: props.product.promo,
+    image: props.product.image,
+    description: props.product.description,
+    quantity: quantity.value
+  });
+}
 </script>
 
 
@@ -65,7 +74,7 @@ onMounted(() => {
             <input class="quantity_input" :value="quantity" readonly />
             <button class="quantity_button" @click="increment">+</button>
           </div>
-          <button class="cart_button">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
         </div>
         <div v-else class="product-price">{{ product.price.toFixed(2).replace('.', ',') }}€
           <div class="quantity-product-button">
@@ -73,7 +82,7 @@ onMounted(() => {
             <input class="quantity_input" :value="quantity" readonly />
             <button class="quantity_button" @click="increment">+</button>
           </div>
-          <button class="cart_button">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
         </div>
       </div>
     </div>

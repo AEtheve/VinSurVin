@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { ref, provide } from 'vue';
 const cartOpen = ref(false);
-provide('cartOpen', cartOpen);
+const productsInCard = ref([]);
 
+provide('cartOpen', cartOpen);
+provide('productsInCard', productsInCard);
+
+function computeSubtotal() {
+  let subtotal = 0;
+  productsInCard.value.forEach((product) => {
+    subtotal += product.price * product.quantity;
+  });
+  return subtotal;
+}
 </script>
 
 <template>
@@ -14,17 +24,34 @@ provide('cartOpen', cartOpen);
 
 
   <div id="cart_box" v-if="cartOpen">
-      <div id="cart_content">
-        <div id="close_cart" @click="cartOpen = false"><svg data-v-2f9813ef="" width="16" height="16" viewBox="0 0 16 16"
-            fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path data-v-2f9813ef="" d="M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round"></path>
-            <path data-v-2f9813ef="" d="M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round"></path>
-          </svg></div>
-        Votre panier vide
+    <div id="cart_content">
+      <div id="close_cart" @click="cartOpen = false"><svg data-v-2f9813ef="" width="16" height="16" viewBox="0 0 16 16"
+          fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path data-v-2f9813ef="" d="M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path data-v-2f9813ef="" d="M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg></div>
+      <div style="display: flex; flex-direction: column; gap: 30px; margin-bottom: 20px;">
+        <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
+          <div data-v-0ec6eb9a="" class="product_card" style="
+          width: 60px;
+          height: 90px;" :style="{ backgroundImage: `url(${product.image})` }">
+          </div>
+          <div style="display: inline-flex; flex-direction: column; padding: 1px; gap: 8px;">
+            <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
+            <div style="font-size: 1.2rem; display: inline-flex; gap: 60px;">
+              <div>x1</div>
+              <div>{{ product.price.toFixed(2).replace('.', ',') }} €</div>
+            </div>
+            <div style="font-size: 1.1rem; color: rgb(23, 23, 80);">Supprimer</div>
+          </div>
+        </div>
       </div>
+
+      <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
     </div>
+  </div>
 </template>
 
 <style scoped>

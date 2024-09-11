@@ -35,7 +35,7 @@ fetchProducts();
     <div  style="display: inline-flex; gap: 25px;">
       <ProductBox v-for="product in products" :product="product" />
     </div>
-    <div style="text-align: center; margin-top: 20px;">
+    <div style="text-align: center; margin-top: 100px;">
       <img src="../assets/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 200px; object-fit: scale-down;">
     </div>
     <div style="text-align: center; margin-top: 20px;">
