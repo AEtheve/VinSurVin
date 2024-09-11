@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import LowerPage from './LowerPage.vue';
 const registerFormMessage = ref("");
 const registerFormError = ref("");
 const loginFormMessage = ref("");
@@ -97,12 +98,7 @@ onMounted(() => {
 
       </div>
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-      <img src="../assets/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 200px; object-fit: scale-down;">
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-      @Vin/20 Corporation
-    </div>"
+      <LowerPage></LowerPage>
   </div>
 </template>
 

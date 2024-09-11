@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ProductBox from './ProductBox.vue'
+import LowerPage from './LowerPage.vue'
 
 const products = ref([]);
 
@@ -15,7 +16,7 @@ const fetchProducts = async () => {
       price: product.price,
       promo: product.promo,
       image: product.image,
-      cepage: product.cepage,
+      grape_variety: product.grape_variety,
       region: product.region,
       millesime: product.millesime,
       appelation: product.appelation,
@@ -30,17 +31,12 @@ fetchProducts();
 </script>
 
 <template>
-  <div  style="padding-left: 3%;">
+  <div style="padding-left: 3%;">
     <button class="filter-button"><i class="fa-solid fa-sliders"></i>Trier et filtrer</button>
-    <div  style="display: inline-flex; gap: 25px;">
+    <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px;">
       <ProductBox v-for="product in products" :product="product" />
     </div>
-    <div style="text-align: center; margin-top: 100px;">
-      <img src="../assets/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 200px; object-fit: scale-down;">
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-      @Vin/20 Corporation
-    </div>"
+    <LowerPage />
   </div>
 </template>
 
@@ -53,7 +49,7 @@ fetchProducts();
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   left: 0;
-  margin-top: 5px ;
+  margin-top: 5px;
 }
 
 #cart_content {
@@ -72,8 +68,8 @@ fetchProducts();
 .filter-button {
   background: #e9e9e9;
   display: flex;
-  border:none;
-  color:black;
+  border: none;
+  color: black;
   padding: 15px;
   border-radius: 10px;
   margin-left: 90%;

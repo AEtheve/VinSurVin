@@ -169,8 +169,19 @@ li {
 	fill: black; 
 }
 
+.ul-header {
+	position: sticky;
+	z-index: 1000;
+	background: white;
+	width: 100%;
+}
+
 .ul-header-mobile {
 	display: none;
+	position: sticky;
+	z-index: 1000;
+	background: white;
+	width: 100%;
 	font-size: 2rem;
 }
 

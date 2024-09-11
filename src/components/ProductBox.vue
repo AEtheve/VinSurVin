@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref,inject, onMounted } from 'vue';
 
 const props = defineProps<{
   product: {
@@ -10,7 +10,7 @@ const props = defineProps<{
     image: string;
     description: string;
 
-    cepage?: string;
+    grape_variety?: string;
     region?: string;
     millesime?: number;
     appelation?: string;
@@ -57,7 +57,7 @@ function addToCart() {
               <p><strong>Appelation:</strong> {{ product.appelation ? product.appelation : 'Non spécifiée' }}</p>
               <p><strong>Région:</strong> {{ product.region ? product.region : 'Non spécifiée' }}</p>
               <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
-              <p><strong>Cépage:</strong> {{ product.cepage ? product.cepage : 'Non spécifié' }}</p>
+              <p><strong>Cépage:</strong> {{ product.grape_variety ? product.grape_variety : 'Non spécifié' }}</p>
               
             </div>
           </div>
@@ -180,6 +180,7 @@ button:hover {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
+  z-index: 1;
 }
 
 .product-price {
