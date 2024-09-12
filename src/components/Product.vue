@@ -1,21 +1,47 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
+const $routes = useRoute();
 
-// raw data
 const product = ref({
-  id: 1,
-  name: "Vin Rouge",
-  price: 25.99,
-  promo: 10,
-  image: "/images/Rouge.jpg",
-  description: "Un vin rouge délicieux avec des notes de fruits rouges et d'épices.",
-  cepage: "Merlot",
-  region: "Bordeaux",
-  millesime: 2020,
-  appellation: "AOC Bordeaux",
-  type: "Rouge",
+  name: '',
+  price: 0,
+  promo: 0,
+  image: '',
+  description: '',
+  cepage: '',
+  region: '',
+  millesime: 0,
+  appellation: '',
+  type: '',
+  pk: 0
 });
+
+
+const fetchProduct = async () => {
+  const response = await fetch(`http://localhost:8000/product/${$routes.params.id}`);
+  const data = await response.json();
+
+  const productData = data.fields;
+  
+  product.value = {
+    name: productData.name,
+    price: productData.price,
+    promo: productData.promo,
+    image: productData.image,
+    description: productData.description,
+    cepage: productData.cepage,
+    region: productData.region,
+    millesime: productData.millesime,
+    appellation: productData.appellation,
+    type: productData.type,
+    pk: productData.pk
+  };
+};
+
+fetchProduct();
+
 
 const quantity = ref(1);
 const showModal = ref(false);

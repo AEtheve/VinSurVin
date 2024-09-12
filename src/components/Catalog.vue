@@ -5,13 +5,16 @@ import LowerPage from './LowerPage.vue'
 
 const products = ref([]);
 
-const fetchProducts = async () => {
-  const response = await fetch('http://localhost:8000/products/');
+const fetchProduct = async () => {
+  const response = await fetch('http://localhost:8000/product/');
   const data = await response.json();
 
   data.forEach((productData) => {
     const product = productData.fields;
+    const id = productData;
+
     products.value.push({
+      pk: id.pk,
       name: product.name,
       price: product.price,
       promo: product.promo,
@@ -25,7 +28,7 @@ const fetchProducts = async () => {
   });
 };
 
-fetchProducts();
+fetchProduct();
 
 
 </script>
