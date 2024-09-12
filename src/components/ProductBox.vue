@@ -13,7 +13,7 @@ const props = defineProps<{
     grape_variety?: string;
     region?: string;
     millesime?: number;
-    appelation?: string;
+    appellation?: string;
     type?: string;
   };
 }>();
@@ -54,7 +54,7 @@ function addToCart() {
           <div class="overlay">
             <div class="description">
               <p v-if="product.type"><strong>Type:</strong> {{ product.type }}</p>
-              <p><strong>Appelation:</strong> {{ product.appelation ? product.appelation : 'Non spécifiée' }}</p>
+              <p><strong>Appellation:</strong> {{ product.appellation ? product.appellation : 'Non spécifiée' }}</p>
               <p><strong>Région:</strong> {{ product.region ? product.region : 'Non spécifiée' }}</p>
               <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
               <p><strong>Cépage:</strong> {{ product.grape_variety ? product.grape_variety : 'Non spécifié' }}</p>

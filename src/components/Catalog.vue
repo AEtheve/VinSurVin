@@ -6,7 +6,7 @@ import LowerPage from './LowerPage.vue'
 const products = ref([]);
 
 const fetchProducts = async () => {
-  const response = await fetch('http://localhost:8000/products/');
+  const response = await fetch('http://localhost:8000/product/');
   const data = await response.json();
 
   data.forEach((productData) => {
@@ -19,7 +19,7 @@ const fetchProducts = async () => {
       grape_variety: product.grape_variety,
       region: product.region,
       millesime: product.millesime,
-      appelation: product.appelation,
+      appellation: product.appellation,
       type: product.type,
     });
   });
