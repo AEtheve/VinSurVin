@@ -6,6 +6,17 @@ const registerFormError = ref("");
 const loginFormMessage = ref("");
 const loginFormError = ref("");
 
+
+const isConnected = ref(false); 
+// todo: check if user is connected
+// fake account
+const accountInfo = ref({
+  username: "John Doe",
+  email: "johndoe@example.com",
+  createdAt: "01/01/2023",
+  lastLogin: "09/11/2024"
+});
+
 onMounted(() => {
   document.getElementById("formRegister").addEventListener("submit", function(event){
     event.preventDefault();
@@ -59,60 +70,74 @@ onMounted(() => {
 
 <template>
   <div>
-    <div style="background: rgb(55, 67, 50); height: 560px;
+    <div v-if ="!isConnected" style="background: rgb(55, 67, 50); height: 560px;
     mask-image: linear-gradient(rgb(0 0 0 / 90%), rgb(0 0 0));
     display: flex;
     align-items: center;
-    justify-content: center;
-    ">
-      <div>
-        <div id="form_account">
-          <form id="formLogin" method="POST">
-            <h2>Connectez-vous</h2>
-            Vous avez déjà un compte sur VinSurVin ?
-            <input type="email" name="email" placeholder="Adresse email" />
-            <input type="password" name="password" placeholder="Mot de passe" />
-            <input type="submit" value="Se connecter" />
+    justify-content: center;">
+      
+      <!-- Conteneur des deux formulaires et du diviseur -->
+      <div id="form_account" class="form-wrapper">
+        <!-- Formulaire de connexion -->
+        <form id="formLogin" method="POST">
+          <h2>Connectez-vous</h2>
+          Vous avez déjà un compte sur VinSurVin ?
+          <input type="email" name="email" placeholder="Adresse email" />
+          <input type="password" name="password" placeholder="Mot de passe" />
+          <input type="submit" value="Se connecter" />
 
-            <p v-if="loginFormMessage != ''">{{ loginFormMessage }}</p>
-            <p v-if="loginFormError != ''">{{ loginFormError }}</p>
-          </form>
+          <p v-if="loginFormMessage != ''">{{ loginFormMessage }}</p>
+          <p v-if="loginFormError != ''">{{ loginFormError }}</p>
+        </form>
 
-          <form id="formRegister" method="POST">
-            <h2>Nouveau client ?</h2>
-            <input type="email" name="email" placeholder="Adresse email" />
-            <input type="password" name="password" placeholder="Mot de passe" />
-            <input type="submit" value="Poursuivre l'inscription"/>
+        <!-- Ligne séparatrice -->
+        <div class="divider"></div>
 
-            <p v-if="registerFormMessage != ''">{{ registerFormMessage }}</p>
-            <p v-if="registerFormError != ''">{{ registerFormError }}</p>
-          </form>
-        </div>
+        <!-- Formulaire d'inscription -->
+        <form id="formRegister" method="POST">
+          <h2>Nouveau client ?</h2>
+          <input type="email" name="email" placeholder="Adresse email" />
+          <input type="password" name="password" placeholder="Mot de passe" />
+          <input type="submit" value="Poursuivre l'inscription"/>
+
+          <p v-if="registerFormMessage != ''">{{ registerFormMessage }}</p>
+          <p v-if="registerFormError != ''">{{ registerFormError }}</p>
+        </form>
       </div>
-
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="../assets/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;
+        <video src="../assets/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
+      </div>
       
-      "></video>
+    </div>
 
+    <div v-else class="account-container">
+      <h1 class="account-title">Mon compte</h1>
+      <div class="account-info">
+        <div class="account-info-row">
+          <span class="account-info-label">Nom d'utilisateur:</span>
+          <span class="account-info-value">{{ accountInfo.username }}</span>
+        </div>
+        <div class="account-info-row">
+          <span class="account-info-label">Email:</span>
+          <span class="account-info-value">{{ accountInfo.email }}</span>
+        </div>
+        <div class="account-info-row">
+          <span class="account-info-label">Date de création:</span>
+          <span class="account-info-value">{{ accountInfo.createdAt }}</span>
+        </div>
+        <div class="account-info-row">
+          <span class="account-info-label">Dernière connexion:</span>
+          <span class="account-info-value">{{ accountInfo.lastLogin }}</span>
+        </div>
       </div>
     </div>
-      <LowerPage></LowerPage>
+
+    <LowerPage></LowerPage>
   </div>
 </template>
 
 <style scoped>
-#cart_box {
-  font-size: 1.4rem;
-  color: black;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  left: 0;
-}
-
 #cart_content {
   position: fixed;
   top: 0;
@@ -122,38 +147,84 @@ onMounted(() => {
   height: 100%;
 }
 
-#close_cart {
-  text-align: right;
-}
-
-#form_account {
-  position: relative;
-  background: white;
+.form-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 1;
-  padding: 15px;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 10px;
   border-radius: 10px;
+  z-index: 1;
+  width: 80%; 
+  max-width: 1000px;
 }
 
 form {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
+  width: 45%;
+  margin-left: 70px;
+  margin-right: 70px;
 }
 
-input{
+input {
   padding: 10px;
-  margin: 10px;
+  margin: 10px 0;
   border-radius: 10px;
   border: 0.5px solid;
 }
 
-input[type=submit]{
+input[type=submit] {
   padding: 10px;
-  margin: 10px;
   background: #2c2c2c;
   color: white;
-  border-radius: 10px
+  border-radius: 10px;
+  cursor: pointer;
+} 
+
+.divider {
+  width: 1px;
+  background-color: #ddd;
+  height: 300px; 
+}
+
+.account-container {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.account-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.account-info-label {
+  font-weight: bold;
+  color: #666;
+}
+
+.account-info-value {
+  color: #333;
+  text-align: right;
 }
 </style>

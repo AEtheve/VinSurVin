@@ -31,15 +31,7 @@ import Catalog from './Catalog.vue';
 </template>
 
 <style scoped>
-#cart_box {
-  font-size: 1.4rem;
-  color: black;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  left: 0;
-}
+
 
 #cart_content {
   position: fixed;
@@ -50,7 +42,4 @@ import Catalog from './Catalog.vue';
   height: 100%;
 }
 
-#close_cart {
-  text-align: right;
-}
 </style>

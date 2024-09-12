@@ -11,13 +11,13 @@ function focusSearch() {
 	const btnSearch = document.getElementById("btn-search");
 
 	if (inputSearch) {
-		isSearchActive.value = true; 
+		isSearchActive.value = true;
 		inputSearch.style.display = 'block';
 		inputSearch.focus();
 		btnSearch.style.display = 'none';
 
 		inputSearch.addEventListener('blur', () => {
-			isSearchActive.value = false; 
+			isSearchActive.value = false;
 			btnSearch.style.display = 'inline-block';
 		});
 	}
@@ -28,13 +28,22 @@ function focusSearch() {
 <template>
 	<div id="promo-border">Profitez de réductions exceptionnelles sur nos vins!</div>
 	<ul class="ul-header-mobile">
-		<div style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
-		</div>
+		<router-link to="/">
+			<div
+				style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+			</div>
+		</router-link>
+
+
 		<span><i class="fa-solid fa-bars"></i></span>
 	</ul>
 	<ul class="ul-header">
-		<div style="background-image: url('/images/logo.png');  width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
-		</div>
+		<router-link to="/">
+			<div
+				style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+			</div>
+		</router-link>
+
 		<div style="
 	          display: inline-flex;
 	    gap: 2.5rem;
@@ -49,11 +58,14 @@ function focusSearch() {
 			<li @click="focusSearch" class="search-container">
 				<span id="btn-search">Rechercher</span>
 				<input type="text" id="input-search" />
-				<svg v-if="isSearchActive" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="search-icon">
+				<svg v-if="isSearchActive" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+					class="search-icon">
 					<g clip-path="url(#clip0_15_152)">
 						<rect width="24" height="24" fill="white"></rect>
 						<circle cx="10.5" cy="10.5" r="6.5" fill="white" stroke="#000000" stroke-linejoin="round"></circle>
-						<path d="M19.6464 20.3536C19.8417 20.5488 20.1583 20.5488 20.3536 20.3536C20.5488 20.1583 20.5488 19.8417 20.3536 19.6464L19.6464 20.3536ZM20.3536 19.6464L15.3536 14.6464L14.6464 15.3536L19.6464 20.3536L20.3536 19.6464Z" fill="#000000"></path>
+						<path
+							d="M19.6464 20.3536C19.8417 20.5488 20.1583 20.5488 20.3536 20.3536C20.5488 20.1583 20.5488 19.8417 20.3536 19.6464L19.6464 20.3536ZM20.3536 19.6464L15.3536 14.6464L14.6464 15.3536L19.6464 20.3536L20.3536 19.6464Z"
+							fill="#000000"></path>
 					</g>
 					<defs>
 						<clipPath id="clip0_15_152">
@@ -161,12 +173,12 @@ li {
 
 .search-icon {
 	position: absolute;
-	right: 10px; 
+	right: 10px;
 	top: 50%;
 	transform: translateY(-50%);
 	width: 24px;
 	height: 24px;
-	fill: black; 
+	fill: black;
 }
 
 .ul-header {
@@ -187,13 +199,13 @@ li {
 
 @media (max-width: 1091px) {
 	.ul-header {
-    display: none;
-  }
-  .ul-header-mobile {
-	display: flex;
-	justify-content: space-between;
-	width: 90%;
-	margin-bottom: 10px;
-  }
-}
-</style>
+		display: none;
+	}
+
+	.ul-header-mobile {
+		display: flex;
+		justify-content: space-between;
+		width: 90%;
+		margin-bottom: 10px;
+	}
+}</style>
