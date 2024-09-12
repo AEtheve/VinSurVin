@@ -22,12 +22,9 @@ function computeSubtotal() {
   <div style="padding-left: 3%; display: flex; gap: 20px; height: 80vh;">
     <div style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
       <h2>Panier</h2>
-
-      <div style="display: inline-flex; flex-direction: column; gap: 20px; overflow-y: auto;">
-      <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
-        <div data-v-0ec6eb9a="" class="product_card" style="
-        width: 120px;
-        height: 180px;" :style="{ backgroundImage: `url(${product.image})` }">
+      <div style="display: inline-flex; flex-direction: column; gap: 20px; overflow-y: auto; max-height: 60vh; padding-right: 10px; width: 98%;">
+        <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
+          <div data-v-0ec6eb9a="" class="product_card" style="width: 120px; height: 180px;" :style="{ backgroundImage: `url(${product.image})` }">
           </div>
           <div style="display: inline-flex; flex-direction: column; padding: 1px; gap: 8px;">
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
@@ -55,11 +52,12 @@ function computeSubtotal() {
           <div style="font-size: 1.2rem;">Total</div>
           <div style="font-size: 1.2rem; font-weight: bold;">{{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
         </div>
-        <button id="validate-cart" >Valider mon panier</button>
-        </div>
+        <button id="validate-cart">Valider mon panier</button>
+      </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 
@@ -71,6 +69,10 @@ function computeSubtotal() {
   background: white;
   padding: 20px;
   height: 100%;
+  width: 98%;
+
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 
