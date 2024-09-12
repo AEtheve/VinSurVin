@@ -84,8 +84,15 @@ function removeProductFromCart(id) {
   height: 100%;
   width: 20vw;
   text-align: center;
+  
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
+
+#close_cart {
+  text-align: right;
+}
 
 #promo-border {
   height: 40px;

@@ -39,12 +39,9 @@ function submitDeliveryForm() {
     <!-- Step 0: Résumé de la commande -->
     <div v-if="step === 0" style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
       <h2>Panier</h2>
-
-      <div style="display: inline-flex; flex-direction: column; gap: 20px; overflow-y: auto;">
-      <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
-        <div data-v-0ec6eb9a="" class="product_card" style="
-        width: 120px;
-        height: 180px;" :style="{ backgroundImage: `url(${product.image})` }">
+      <div style="display: inline-flex; flex-direction: column; gap: 20px; overflow-y: auto; max-height: 60vh; padding-right: 10px; width: 98%;">
+        <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
+          <div data-v-0ec6eb9a="" class="product_card" style="width: 120px; height: 180px;" :style="{ backgroundImage: `url(${product.image})` }">
           </div>
           <div style="display: inline-flex; flex-direction: column; padding: 1px; gap: 8px;">
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
@@ -120,6 +117,7 @@ function submitDeliveryForm() {
   </div>
 </template>
 
+
 <style scoped>
 
 .delivery-form {
@@ -185,6 +183,10 @@ function submitDeliveryForm() {
   background: white;
   padding: 20px;
   height: 100%;
+  width: 98%;
+
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 
