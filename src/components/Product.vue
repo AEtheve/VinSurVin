@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import LowerPage from './LowerPage.vue';
 
 const $routes = useRoute();
 
@@ -101,6 +102,7 @@ function closeModal() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
+  <LowerPage></LowerPage>
 </template>
 
 <style scoped>

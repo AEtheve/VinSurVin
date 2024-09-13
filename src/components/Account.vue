@@ -76,9 +76,7 @@ onMounted(() => {
     align-items: center;
     justify-content: center;">
       
-      <!-- Conteneur des deux formulaires et du diviseur -->
       <div id="form_account" class="form-wrapper">
-        <!-- Formulaire de connexion -->
         <form id="formLogin" method="POST">
           <h2>Connectez-vous</h2>
           Vous avez déjà un compte sur VinSurVin ?
@@ -106,7 +104,7 @@ onMounted(() => {
       </div>
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="../assets/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
+        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
       </div>
       
     </div>

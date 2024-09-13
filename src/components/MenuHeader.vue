@@ -30,7 +30,7 @@ function focusSearch() {
 	<ul class="ul-header-mobile">
 		<router-link to="/">
 			<div
-				style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+				style="background-image: url('https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 			</div>
 		</router-link>
 
@@ -40,7 +40,7 @@ function focusSearch() {
 	<ul class="ul-header">
 		<router-link to="/">
 			<div
-				style="background-image: url('/images/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
+				style="background-image: url('https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 			</div>
 		</router-link>
 
