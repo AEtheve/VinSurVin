@@ -70,11 +70,14 @@ def add_to_cart(request):
     try:
         data = json.loads(request.body)
         username = data.get('username')
-        product_id = data.get('product')  # Changed from 'product_id' to 'product'
-        quantity = int(data.get('quantity', 1))  # Convert to int
+        product_id = data.get('product')
+        quantity = int(data.get('quantity', 1))
 
         if not all([username, product_id]):
             return JsonResponse({'error': 'Username et Product ID sont requis'}, status=400)
+
+        if quantity <= 0:
+            return JsonResponse({'error': 'La quantité doit être positive'}, status=400)
 
         try:
             user = User.objects.get(username=username)
