@@ -70,11 +70,14 @@ def add_to_cart(request):
     try:
         data = json.loads(request.body)
         username = data.get('username')
-        product_id = data.get('product')  # Changed from 'product_id' to 'product'
-        quantity = int(data.get('quantity', 1))  # Convert to int
+        product_id = data.get('product')
+        quantity = int(data.get('quantity', 1))
 
         if not all([username, product_id]):
             return JsonResponse({'error': 'Username et Product ID sont requis'}, status=400)
+
+        if quantity <= 0:
+            return JsonResponse({'error': 'La quantité doit être positive'}, status=400)
 
         try:
             user = User.objects.get(username=username)
@@ -131,5 +134,95 @@ def get_cart(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
         return JsonResponse({'cart': user.get_cart()})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_order(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        order = user.create_order()
+        return JsonResponse({'message': 'Commande créée avec succès', 'order': order})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@require_http_methods(["GET"])
+def get_orders(request):
+    try:
+        username = request.GET.get('username')
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        return JsonResponse({'orders': user.get_orders()})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def mark_order_delivered(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        order_id = data.get('order_id')
+
+        if not all([username, order_id]):
+            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        if user.update_order_status(order_id, 'delivered'):
+            return JsonResponse({'message': 'Order marked as delivered'})
+        else:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def cancel_order(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        order_id = data.get('order_id')
+
+        if not all([username, order_id]):
+            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        if user.update_order_status(order_id, 'canceled'):
+            return JsonResponse({'message': 'Order canceled'})
+        else:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
