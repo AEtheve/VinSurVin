@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch , computed} from 'vue';
 import ProductBox from './ProductBox.vue';
 import LowerPage from './LowerPage.vue';
 
@@ -7,9 +7,10 @@ const products = ref<Product[]>([]);
 const showFilterMenu = ref(false);
 const rangemin = ref(0);
 const rangemax = ref(1000);
-const minPrice = ref(100); 
-const maxPrice = ref(1000);
-
+const minPrice = ref(0); 
+const maxPrice = ref(10000000);
+const currentPage = ref(1);
+const productsPerPage = 10;
 
 function applyFilters() {
   console.log('Filtres appliqués:', minPrice.value, maxPrice.value);
@@ -24,7 +25,7 @@ interface Product {
   grape_variety: string;
   region: string;
   millesime: string;
-  appelation: string;
+  appellation: string;
   type: string;
 }
 
@@ -32,11 +33,12 @@ const fetchProduct = async () => {
   const response = await fetch('http://localhost:8000/product/');
   const data = await response.json();
 
-  data.forEach((productData) => {
+
+  products.value = data.map((productData) => {
     const product = productData.fields;
     const id = productData;
 
-    products.value.push({
+    return {
       pk: id.pk,
       name: product.name,
       price: product.price,
@@ -47,13 +49,41 @@ const fetchProduct = async () => {
       millesime: product.millesime,
       appellation: product.appellation,
       type: product.type,
-    });
+    };
   });
 };
 
 onMounted(() => {
   fetchProduct();
 });
+
+const filteredProducts = computed(() => {
+  return products.value.filter(product => {
+    return (
+      product.price >= minPrice.value &&
+      product.price <= maxPrice.value
+    );
+  });
+});
+
+const paginatedProducts = computed(() => {
+  console.log('Filtered Products:', filteredProducts.value); // Log filtered products to inspect
+  const start = (currentPage.value - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  return filteredProducts.value.slice(start, end);
+});
+
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredProducts.value.length / productsPerPage);
+});
+
+function changePage(page: number) {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+}
+
 
 watch(minPrice, (newMinPrice) => {
   if (newMinPrice >= maxPrice.value) {
@@ -157,9 +187,14 @@ function openFilterMenu() {
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
     </button>
     <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px;">
-      <ProductBox v-for="product in products" :product="product" :key="product.pk" />
+      <ProductBox v-for="product in paginatedProducts" :product="product" :key="product.pk" />
     </div>
     <LowerPage />
+    <div class="pagination-controls">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage  === 1">Précédent</button>
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+      <button @click="changePage(currentPage+ 1)" :disabled="currentPage === totalPages">Suivant</button>
+    </div>
   </div>
 </template>
 
@@ -252,4 +287,21 @@ dialog {
   min-width: 60px;
   text-align: right;
 }
+
+button {
+  padding: 10px;
+  margin: 10px;
+  background: black;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: white;
+  color: black;
+  border: 2px solid black;
+}
+
 </style>
