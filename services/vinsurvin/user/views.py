@@ -133,3 +133,93 @@ def get_cart(request):
         return JsonResponse({'cart': user.get_cart()})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_order(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        order = user.create_order()
+        return JsonResponse({'message': 'Commande créée avec succès', 'order': order})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@require_http_methods(["GET"])
+def get_orders(request):
+    try:
+        username = request.GET.get('username')
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        return JsonResponse({'orders': user.get_orders()})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def mark_order_delivered(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        order_id = data.get('order_id')
+
+        if not all([username, order_id]):
+            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        if user.update_order_status(order_id, 'delivered'):
+            return JsonResponse({'message': 'Order marked as delivered'})
+        else:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def cancel_order(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        order_id = data.get('order_id')
+
+        if not all([username, order_id]):
+            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        if user.update_order_status(order_id, 'canceled'):
+            return JsonResponse({'message': 'Order canceled'})
+        else:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
