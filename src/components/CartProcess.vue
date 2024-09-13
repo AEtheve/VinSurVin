@@ -22,13 +22,6 @@ provide('computeSubtotal', computeSubtotal);
 
 const step = ref(0);
 
-function formatCardNumber(event: Event) {
-  const input = event.target as HTMLInputElement;
-  input.value = input.value.replace(/[^\d ]/g, ''); 
-}
-
-
-
 function validateCart() {
   step.value = 1;
 }
@@ -36,6 +29,21 @@ function validateCart() {
 function submitDeliveryForm() {
   step.value = 2;
 }
+// Variables pour stocker les données du formulaire
+const nom = ref('');
+const address = ref('');
+const city = ref('');
+//Fonction pour savoir si les champs du formaulaire de Livraison est remplie
+function isFormDeliveryValid() {
+  return (
+    nom.value &&
+    address.value &&
+    city.value
+  );
+}
+
+provide('isFormDeliveryValid', isFormDeliveryValid);
+provide('submitDeliveryForm', submitDeliveryForm);
 </script>
 
 <template>
@@ -61,21 +69,20 @@ function submitDeliveryForm() {
 
  <!-- Step 1: commande validé, formulaire de livraison et formulaire de paiement côte à côte -->
  <div v-if="step === 1" class="form-container">
-    <!-- Formulaire de Livraison -->
     <div class="delivery-form">
       <h2 class="form-title">Formulaire de Livraison</h2>
       <form @submit.prevent="submitDeliveryForm">
         <div class="form-group">
           <label for="name" class="form-label">Nom :</label>
-          <input type="text" id="name" placeholder="Votre nom" required class="form-input" />
+          <input type="text" id="name" v-model="nom" placeholder="Votre nom" required class="form-input" />
         </div>
         <div class="form-group">
           <label for="address" class="form-label">Adresse :</label>
-          <input type="text" id="address" placeholder="Votre adresse" required class="form-input" />
+          <input type="text" id="address" v-model="address" placeholder="Votre adresse" required class="form-input" />
         </div>
         <div class="form-group">
           <label for="city" class="form-label">Ville :</label>
-          <input type="text" id="city" placeholder="Votre ville" required class="form-input" />
+          <input type="text" id="city" v-model="city" placeholder="Votre ville" required class="form-input" />
         </div>
       </form>
     </div>
