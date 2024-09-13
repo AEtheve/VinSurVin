@@ -9,7 +9,7 @@ provide('productsInCard', productsInCard);
 function computeSubtotal() {
   let subtotal = 0;
   productsInCard.value.forEach((product) => {
-    subtotal += product.price * product.quantity;
+    subtotal += (product.price * (1 - product.promo / 100)) * product.quantity;
   });
   return subtotal;
 }
@@ -47,7 +47,7 @@ function removeProductFromCart(id) {
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
             <div style="font-size: 1.2rem; display: inline-flex; gap: 60px;">
               <div>x{{ product.quantity }}</div>
-              <div>{{ product.price.toFixed(2).replace('.', ',') }} €</div>
+              <div>{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</div>
             </div>
             <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;"
               @click="removeProductFromCart(product.id)"

@@ -18,10 +18,14 @@ from django.urls import path
 from user import views as user_views
 from product import views as product_views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/new', user_views.create_user, name='create_user'),
     path('user/login', user_views.login, name='login'),
     path('product/', product_views.get_products, name='get_products'),
-    path('product/<int:numero>', product_views.get_product, name='get_product')
+    path('product/<int:numero>', product_views.get_product, name='get_product'),
+    path('add-to-cart/', user_views.add_to_cart, name='add_to_cart'),
+    path('remove-from-cart/', user_views.remove_from_cart, name='remove_from_cart'),
+    path('get-cart/', user_views.get_cart, name='get_cart'),
 ]

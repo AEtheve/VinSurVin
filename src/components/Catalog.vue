@@ -10,6 +10,7 @@ const rangemax = ref(1000);
 const minPrice = ref(100); 
 const maxPrice = ref(1000);
 
+
 function applyFilters() {
   console.log('Filtres appliqués:', minPrice.value, maxPrice.value);
 }
@@ -44,7 +45,7 @@ const fetchProduct = async () => {
       grape_variety: product.grape_variety,
       region: product.region,
       millesime: product.millesime,
-      appelation: product.appelation,
+      appellation: product.appellation,
       type: product.type,
     });
   });

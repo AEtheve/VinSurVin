@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue';
+import { ref, inject, provide } from 'vue';
 import { onMounted } from 'vue';
+import Payment from './Payment.vue';
+import LowerPage from './LowerPage.vue';
 
 onMounted(() => {
   const cartOpen = inject("cartOpen");
@@ -12,18 +14,13 @@ const productsInCard = inject('productsInCard');
 function computeSubtotal() {
   let subtotal = 0;
   productsInCard.value.forEach((product) => {
-    subtotal += product.price * product.quantity;
+    subtotal += (product.price * (1 - product.promo / 100)) * product.quantity;
   });
   return subtotal;
 }
+provide('computeSubtotal', computeSubtotal);
+
 const step = ref(0);
-
-function formatCardNumber(event: Event) {
-  const input = event.target as HTMLInputElement;
-  input.value = input.value.replace(/[^\d ]/g, ''); 
-}
-
-
 
 function validateCart() {
   step.value = 1;
@@ -32,10 +29,25 @@ function validateCart() {
 function submitDeliveryForm() {
   step.value = 2;
 }
+// Variables pour stocker les données du formulaire
+const nom = ref('');
+const address = ref('');
+const city = ref('');
+//Fonction pour savoir si les champs du formaulaire de Livraison est remplie
+function isFormDeliveryValid() {
+  return (
+    nom.value &&
+    address.value &&
+    city.value
+  );
+}
+
+provide('isFormDeliveryValid', isFormDeliveryValid);
+provide('submitDeliveryForm', submitDeliveryForm);
 </script>
 
 <template>
-  <div style="padding-left: 3%; display: flex; gap: 20px; height: 80vh;">
+  <div style="padding-left: 3%; display: flex; gap: 0px; height: 80vh; justify-content: space-evenly">
     <!-- Step 0: Résumé de la commande -->
     <div v-if="step === 0" style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
       <h2>Panier</h2>
@@ -47,7 +59,7 @@ function submitDeliveryForm() {
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
             <div style="font-size: 1.2rem; display: inline-flex; gap: 60px;">
               <div>Quantité : {{product.quantity}}</div>
-              <div>{{ product.price.toFixed(2).replace('.', ',') }} €</div>
+              <div>{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</div>
             </div>
             <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;">Supprimer</div>
           </div>
@@ -55,38 +67,27 @@ function submitDeliveryForm() {
       </div>
     </div>
 
-<!-- Step 1: commande validé, formulaire de livraison-->
-<div v-if="step === 1" class="delivery-form">
-  <h2 class="form-title">Formulaire de Livraison</h2>
-  <form @submit.prevent="submitDeliveryForm">
-    <div class="form-group">
-      <label for="name" class="form-label">Nom :</label>
-      <input type="text" id="name" placeholder="Votre nom" required class="form-input" />
+ <!-- Step 1: commande validé, formulaire de livraison et formulaire de paiement côte à côte -->
+ <div v-if="step === 1" class="form-container">
+    <div class="delivery-form">
+      <h2 class="form-title">Formulaire de Livraison</h2>
+      <form @submit.prevent="submitDeliveryForm">
+        <div class="form-group">
+          <label for="name" class="form-label">Nom :</label>
+          <input type="text" id="name" v-model="nom" placeholder="Votre nom" required class="form-input" />
+        </div>
+        <div class="form-group">
+          <label for="address" class="form-label">Adresse :</label>
+          <input type="text" id="address" v-model="address" placeholder="Votre adresse" required class="form-input" />
+        </div>
+        <div class="form-group">
+          <label for="city" class="form-label">Ville :</label>
+          <input type="text" id="city" v-model="city" placeholder="Votre ville" required class="form-input" />
+        </div>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="address" class="form-label">Adresse :</label>
-      <input type="text" id="address" placeholder="Votre adresse" required class="form-input" />
-    </div>
-    <div class="form-group">
-      <label for="city" class="form-label">Ville :</label>
-      <input type="text" id="city" placeholder="Votre ville" required class="form-input" />
-    </div>
-    <div class="form-group">
-  <label for="credit-card" class="form-label">Carte Bancaire :</label>
-  <input 
-    type="text" 
-    id="credit-card" 
-    placeholder="0000 0000 0000 0000" 
-    maxlength="19" 
-    required 
-    class="form-input" 
-    inputmode="numeric"
-    @input="formatCardNumber"
-  />
-</div>
-    <button type="submit" class="submit-button">Soumettre</button>
-  </form>
-</div>
+      <Payment></Payment>
+  </div>
 
      <!-- Step 2: récap de la commande validé  -->
      <div v-if="step === 2" style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
@@ -95,8 +96,8 @@ function submitDeliveryForm() {
     </div>
 
 
-    <div style="flex: 0.3 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
-      <h2>Récapitulatif</h2>
+    <div style="flex: 0.3 1 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
+      <h2>Récapitulatif :</h2>
       <div style="display: flex; flex-direction: column; gap: 30px; margin-bottom: 20px; padding: 0 20px;">
         <div style="display: inline-flex; gap: 21px; justify-content: space-between;">
           <div style="font-size: 1.2rem;">Sous-total</div>
@@ -115,6 +116,7 @@ function submitDeliveryForm() {
       </div>
     </div>
   </div>
+  <LowerPage></LowerPage>
 </template>
 
 
@@ -123,11 +125,31 @@ function submitDeliveryForm() {
 .delivery-form {
   background: #f9f9f9;
   border-radius: 10px;
-  padding: 30px;
+  padding: 60px;
+  padding-top: 1;
+  flex: 1;
   width: 35%;
   height: 80%;
   margin: 0 auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 84px; 
+  margin: 20px 0;
+  flex-wrap: nowrap;
+}
+
+
+.delivery-form, .payment-form {
+  flex: 1; 
+  padding: 60px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-title {
