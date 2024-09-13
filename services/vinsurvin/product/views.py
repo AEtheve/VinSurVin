@@ -15,6 +15,16 @@ def get_products(request):
         return JsonResponse(product_list, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+@require_http_methods(["GET"])
+def get_product_by_name(request):
+    try:
+        search_query = request.GET.get('name', '')
+        products = Product.objects.filter(name__icontains=search_query)
+        product_list = json.loads(serialize('json', products))
+        return JsonResponse(product_list, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @require_http_methods(["GET"])
 def get_product(request, numero):
