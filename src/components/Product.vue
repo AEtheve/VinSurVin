@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import LowerPage from './LowerPage.vue';
 
 const $routes = useRoute();
+
+const productsInCard = inject('productsInCard');
 
 const product = ref({
   name: '',
@@ -25,7 +27,8 @@ const fetchProduct = async () => {
   const data = await response.json();
 
   const productData = data.fields;
-  
+  const id = data;
+
   product.value = {
     name: productData.name,
     price: productData.price,
@@ -37,7 +40,7 @@ const fetchProduct = async () => {
     millesime: productData.millesime,
     appellation: productData.appellation,
     type: productData.type,
-    pk: productData.pk
+    pk: id.pk
   };
 };
 
@@ -66,6 +69,34 @@ function openModal() {
 function closeModal() {
   showModal.value = false;
 }
+
+function addToCart() {
+  console.log('Adding product to cart:', product.value);
+
+  const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
+  console.log('PK :', product.value.pk, 'Existing product index:', existingProductIndex );
+
+  if (existingProductIndex !== -1) {
+    console.log('Product already in cart, updating quantity');
+    productsInCard.value[existingProductIndex].quantity += quantity.value;
+  } else {
+    console.log('Product not in cart, adding new item');
+    productsInCard.value.push({
+      pk: product.value.pk,
+      name: product.value.name,
+      price: product.value.price,
+      promo: product.value.promo,
+      image: product.value.image,
+      quantity: quantity.value
+    });
+  }
+
+  console.log('Updated products in cart:', productsInCard.value);
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+}
+
+
+
 </script>
 
 <template>
@@ -88,13 +119,19 @@ function closeModal() {
         <p class="product-millesime"><strong>Millésime:</strong> {{ product.millesime || 'Non spécifié' }}</p>
         <p class="product-appellation"><strong>Appellation:</strong> {{ product.appellation || 'Non spécifiée' }}</p>
         <p class="product-type"><strong>Type:</strong> {{ product.type || 'Non spécifié' }}</p>
+        <p class="product-price">
+          <span v-if="product.promo > 0" class="price-before">{{ product.price.toFixed(2).replace('.', ',') }} €</span>
+          <span class="price-prom
+          o">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</span>
+          <span v-if="product.promo > 0" class="promo-percent">-{{ product.promo }}%</span>
+        </p>
         <div class="quantity-product-button">
           <button class="quantity_button" @click="decrement">-</button>
           <input class="quantity_input" :value="quantity" readonly />
           <button class="quantity_button" @click="increment">+</button>
         </div>
         <div class="add-to-cart-container">
-          <button class="cart_button">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart" >Ajouter au panier</button>
         </div>
       </div>
     </div>
@@ -253,6 +290,7 @@ function closeModal() {
   cursor: pointer;
   transition: all 0.3s ease;
   width: 60%;
+  
 }
 
 

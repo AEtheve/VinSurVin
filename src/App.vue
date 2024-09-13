@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, provide } from 'vue';
 const cartOpen = ref(false);
-const productsInCard = ref([]);
+const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
 
 provide('cartOpen', cartOpen);
 provide('productsInCard', productsInCard);
@@ -18,6 +18,7 @@ function removeProductFromCart(id) {
   const index = productsInCard.value.findIndex((product) => product.id === id);
   productsInCard.value.splice(index, 1);
 }
+provide('removeProductFromCart', removeProductFromCart);
 </script>
 
 <template>

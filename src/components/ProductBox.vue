@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { provide } from 'vue';
 import { defineProps, ref,inject, onMounted } from 'vue';
 
 const props = defineProps<{
@@ -18,9 +19,6 @@ const props = defineProps<{
   };
 }>();
 
-onMounted(() => {
-  console.log(props.product.pk ); 
-});
 
 
 const productsInCard = inject('productsInCard');
@@ -38,16 +36,25 @@ function decrement() {
 }
 
 function addToCart() {
-  productsInCard.value.push({
-    pk: props.product.pk,
-    name: props.product.name,
-    price: props.product.price,
-    promo: props.product.promo,
-    image: props.product.image,
-    description: props.product.description,
-    quantity: quantity.value
-  });
+  const existingProductIndex = productsInCard.value.findIndex(item => item.pk === props.product.pk);
+
+  if (existingProductIndex !== -1) {
+    productsInCard.value[existingProductIndex].quantity += quantity.value;
+
+  } else {
+    productsInCard.value.push({
+      pk: props.product.pk,
+      name: props.product.name,
+      price: props.product.price,
+      promo: props.product.promo,
+      image: props.product.image,
+      quantity: quantity.value
+    });
+  }
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 }
+
+provide('addToCart', addToCart);
 </script>
 
 
