@@ -18,6 +18,7 @@ function removeProductFromCart(id) {
   const index = productsInCard.value.findIndex((product) => product.id === id);
   productsInCard.value.splice(index, 1);
 }
+provide('removeProductFromCart', removeProductFromCart);
 </script>
 
 <template>

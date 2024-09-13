@@ -119,6 +119,12 @@ function addToCart() {
         <p class="product-millesime"><strong>Millésime:</strong> {{ product.millesime || 'Non spécifié' }}</p>
         <p class="product-appellation"><strong>Appellation:</strong> {{ product.appellation || 'Non spécifiée' }}</p>
         <p class="product-type"><strong>Type:</strong> {{ product.type || 'Non spécifié' }}</p>
+        <p class="product-price">
+          <span v-if="product.promo > 0" class="price-before">{{ product.price.toFixed(2).replace('.', ',') }} €</span>
+          <span class="price-prom
+          o">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</span>
+          <span v-if="product.promo > 0" class="promo-percent">-{{ product.promo }}%</span>
+        </p>
         <div class="quantity-product-button">
           <button class="quantity_button" @click="decrement">-</button>
           <input class="quantity_input" :value="quantity" readonly />

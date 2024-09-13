@@ -4,6 +4,10 @@ import { onMounted } from 'vue';
 import Payment from './Payment.vue';
 import LowerPage from './LowerPage.vue';
 
+function removeProductFromCart(id) {
+  const index = productsInCard.value.findIndex((product) => product.id === id);
+  productsInCard.value.splice(index, 1);
+}
 onMounted(() => {
   const cartOpen = inject("cartOpen");
   cartOpen.value = false;
@@ -61,7 +65,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
               <div>Quantité : {{product.quantity}}</div>
               <div>{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</div>
             </div>
-            <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;">Supprimer</div>
+            <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;" @click="removeProductFromCart(product.id)">Supprimer</div>
           </div>
         </div>
       </div>
