@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from djongo import models as djongo_models
 
 class User(AbstractUser):
+    id = models.AutoField(primary_key=True, serialize=False)
     cart = djongo_models.JSONField(default=dict, null=True, blank=True)
 
     def add_to_cart(self, product_id, quantity):
