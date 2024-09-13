@@ -28,4 +28,8 @@ urlpatterns = [
     path('add-to-cart/', user_views.add_to_cart, name='add_to_cart'),
     path('remove-from-cart/', user_views.remove_from_cart, name='remove_from_cart'),
     path('get-cart/', user_views.get_cart, name='get_cart'),
+    path('create-order/', user_views.create_order, name='create_order'),
+    path('get-orders/', user_views.get_orders, name='get_orders'),
+    path('mark-order-delivered/', user_views.mark_order_delivered, name='mark_order_delivered'),
+    path('cancel-order/', user_views.cancel_order, name='cancel_order'),
 ]
