@@ -8,7 +8,9 @@ class User(AbstractUser):
     def add_to_cart(self, product_id, quantity):
         if self.cart is None:
             self.cart = []
-        
+        elif isinstance(self.cart, dict):
+            self.cart = list(self.cart.values())
+            
         item = next((item for item in self.cart if item['product_id'] == product_id), None)
         if item:
             item['quantity'] += quantity
