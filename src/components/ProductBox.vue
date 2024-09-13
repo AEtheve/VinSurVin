@@ -3,13 +3,13 @@ import { defineProps, ref,inject, onMounted } from 'vue';
 
 const props = defineProps<{
   product: {
-    id: number;
     name: string;
     price: number;
     promo: number;
     image: string;
     description: string;
 
+    pk: number;  
     grape_variety?: string;
     region?: string;
     millesime?: number;
@@ -17,6 +17,11 @@ const props = defineProps<{
     type?: string;
   };
 }>();
+
+onMounted(() => {
+  console.log(props.product.pk ); 
+});
+
 
 const productsInCard = inject('productsInCard');
 
@@ -34,7 +39,7 @@ function decrement() {
 
 function addToCart() {
   productsInCard.value.push({
-    id: props.product.id,
+    pk: props.product.pk,
     name: props.product.name,
     price: props.product.price,
     promo: props.product.promo,
@@ -49,7 +54,7 @@ function addToCart() {
 <template>
   <div>
     <div id="product-box">
-      <a :href="'/product/' + product.id">
+      <a :href="'/product/' + product.pk">
         <div class="product_card" :style="{ backgroundImage: 'url(' + product.image + ')' }">
           <div class="overlay">
             <div class="description">
@@ -58,35 +63,35 @@ function addToCart() {
               <p><strong>Région:</strong> {{ product.region ? product.region : 'Non spécifiée' }}</p>
               <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
               <p><strong>Cépage:</strong> {{ product.grape_variety ? product.grape_variety : 'Non spécifié' }}</p>
-              
             </div>
           </div>
         </div>
       </a>
       <div class="price-box">
-    <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>   
+        <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>   
         <div class="product-price">
-            <div class="promo-details">
-                <div v-if="product.promo > 0">
-                    <span class="promo">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
-                    <span class="promo-pourcent">-{{ product.promo }}%</span>
-                    <div class="promo-price">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
-                </div>
-                <div v-else>
-                    <span>{{ product.price.toFixed(2).replace('.', ',') }}€</span>
-                </div>
+          <div class="promo-details">
+            <div v-if="product.promo > 0">
+              <span class="promo">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
+              <span class="promo-pourcent">-{{ product.promo }}%</span>
+              <div class="promo-price">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
             </div>
-            <div class="quantity-product-button">
-                <button class="quantity_button" @click="decrement">-</button>
-                <input class="quantity_input" :value="quantity" readonly />
-                <button class="quantity_button" @click="increment">+</button>
+            <div v-else>
+              <span>{{ product.price.toFixed(2).replace('.', ',') }}€</span>
             </div>
-            <button class="cart_button" @click="addToCart">Ajouter au panier</button>
+          </div>
+          <div class="quantity-product-button">
+            <button class="quantity_button" @click="decrement">-</button>
+            <input class="quantity_input" :value="quantity" readonly />
+            <button class="quantity_button" @click="increment">+</button>
+          </div>
+          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .quantity_input {
