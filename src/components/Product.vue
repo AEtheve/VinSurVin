@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { inject } from 'vue';
+import LowerPage from './LowerPage.vue';
+
 const $routes = useRoute();
 
 const productsInCard = inject('productsInCard');
-
 
 const product = ref({
   name: '',
@@ -139,6 +139,7 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
+  <LowerPage></LowerPage>
 </template>
 
 <style scoped>
