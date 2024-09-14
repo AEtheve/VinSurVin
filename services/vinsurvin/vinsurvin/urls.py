@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/new', user_views.create_user, name='create_user'),
     path('user/login', user_views.login, name='login'),
+    path('user/info', user_views.get_user_info, name='get_user_info'),
     path('product/', product_views.get_products, name='get_products'),
     path('product/<int:numero>', product_views.get_product, name='get_product'),
     path('add-to-cart/', user_views.add_to_cart, name='add_to_cart'),

@@ -6,83 +6,104 @@ const registerFormError = ref("");
 const loginFormMessage = ref("");
 const loginFormError = ref("");
 
+const isConnected = document.cookie.includes("csrftoken");
 
-const isConnected = ref(false); 
-// todo: check if user is connected
-// fake account
-const accountInfo = ref({
-  username: "John Doe",
-  email: "johndoe@example.com",
-  createdAt: "01/01/2023",
-  lastLogin: "09/11/2024"
-});
+const accountInfo = ref({});
 
 onMounted(() => {
-  document.getElementById("formRegister").addEventListener("submit", function(event){
-    event.preventDefault();
+  if (isConnected) {
+    getInfos();
+  } else {
+    document.getElementById("formRegister").addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    fetch("http://localhost:8000/user/new", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: event.target.email.value,
-        password: event.target.password.value,
-        username: event.target.email.value
-    })})
-    .then(response => response.json())
-    .then(data => {
-      if(data.error){
-        registerFormError.value = data.error;
-      }else{
-        registerFormMessage.value = data.message;
-      }
-    })
-  });
+      fetch("http://localhost:8000/user/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: event.target.email.value,
+          password: event.target.password.value,
+          username: event.target.email.value
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            registerFormError.value = data.error;
+          } else {
+            registerFormMessage.value = data.message;
+          }
+        })
+    });
 
-  document.getElementById("formLogin").addEventListener("submit", function(event){
-    event.preventDefault();
+    document.getElementById("formLogin").addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    fetch("http://localhost:8000/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: event.target.email.value,
-        password: event.target.password.value
-    })})
-    .then(response => response.json())
-    .then(data => {
-      if(data.error){
-        loginFormError.value = data.error;
-      }else{
-        loginFormMessage.value = data.message;
-        console.log(data);
-      }
-    })
-  });
+      fetch("http://localhost:8000/user/login", {
+        method: "POST",
+        credentials: "include",
+        mode: 'cors',
 
-  
+        body: JSON.stringify({
+          username: event.target.username.value,
+          password: event.target.password.value
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            loginFormError.value = data.error;
+          } else {
+            loginFormMessage.value = data.message;
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        })
+    });
+  }
 });
+
+function formatDate(date) {
+  const d = new Date(date);
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+}
+
+function getInfos() {
+  fetch("http://localhost:8000/user/info", {
+    method: "GET",
+    credentials: "include",
+    mode: 'cors',
+  })
+    .then(response => response.json())
+    .then(data => {
+      accountInfo.value = {
+        username: data.username,
+        email: data.email,
+        createdAt: formatDate(data.createdAt),
+        lastLogin: formatDate(data.lastLogin),
+      };
+    })
+}
 </script>
 
 <template>
   <div>
-    <div v-if ="!isConnected" style="background: rgb(55, 67, 50); height: 560px;
+    <div v-if="!isConnected" style="background: rgb(55, 67, 50); height: 560px;
     mask-image: linear-gradient(rgb(0 0 0 / 90%), rgb(0 0 0));
     display: flex;
     align-items: center;
     justify-content: center;">
-      
+
       <!-- Conteneur des deux formulaires et du diviseur -->
       <div id="form_account" class="form-wrapper">
         <!-- Formulaire de connexion -->
         <form id="formLogin" method="POST">
           <h2>Connectez-vous</h2>
           Vous avez déjà un compte sur VinSurVin ?
-          <input type="email" name="email" placeholder="Adresse email" />
+          <input type="text" name="username" placeholder="Nom d'utilisateur" />
           <input type="password" name="password" placeholder="Mot de passe" />
           <input type="submit" value="Se connecter" />
 
@@ -96,9 +117,9 @@ onMounted(() => {
         <!-- Formulaire d'inscription -->
         <form id="formRegister" method="POST">
           <h2>Nouveau client ?</h2>
-          <input type="email" name="email" placeholder="Adresse email" />
+          <input type="text" name="email" placeholder="Adresse email" />
           <input type="password" name="password" placeholder="Mot de passe" />
-          <input type="submit" value="Poursuivre l'inscription"/>
+          <input type="submit" value="Poursuivre l'inscription" />
 
           <p v-if="registerFormMessage != ''">{{ registerFormMessage }}</p>
           <p v-if="registerFormError != ''">{{ registerFormError }}</p>
@@ -106,9 +127,10 @@ onMounted(() => {
       </div>
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="../assets/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
+        <video src="../assets/wine_video.mp4" autoplay loop muted
+          style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
       </div>
-      
+
     </div>
 
     <div v-else class="account-container">
@@ -155,7 +177,7 @@ onMounted(() => {
   padding: 10px;
   border-radius: 10px;
   z-index: 1;
-  width: 80%; 
+  width: 80%;
   max-width: 1000px;
 }
 
@@ -180,12 +202,12 @@ input[type=submit] {
   color: white;
   border-radius: 10px;
   cursor: pointer;
-} 
+}
 
 .divider {
   width: 1px;
   background-color: #ddd;
-  height: 300px; 
+  height: 300px;
 }
 
 .account-container {

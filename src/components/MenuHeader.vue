@@ -16,9 +16,7 @@ const productsInCard = inject('productsInCard');
 
 const isSearchActive = ref(false);
 
-const totalQuantity = computed(() => {
-  return productsInCard.value.reduce((total, item) => total + item.quantity, 0);
-});
+const isConnected = document.cookie.includes("csrftoken");
 
 function focusSearch() {
   const inputSearch = document.getElementById("input-search");
@@ -90,7 +88,8 @@ function focusSearch() {
 				</svg>
 			</li>
 			<li>
-				<router-link to="/account" :class="{ active: $route.path === '/account' }">Se connecter /
+				<router-link v-if="isConnected" to="/account" :class="{ active: $route.path === '/account' }">Compte</router-link>
+				<router-link v-else to="/account" :class="{ active: $route.path === '/account' }">Se connecter /
 					S'inscrire</router-link>
 			</li>
 			<li>
