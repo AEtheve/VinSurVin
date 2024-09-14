@@ -17,10 +17,44 @@ def get_products(request):
         return JsonResponse({"error": str(e)}, status=500)
     
 @require_http_methods(["GET"])
-def get_product_by_name(request):
+def search_product(request):
     try:
-        search_query = request.GET.get('name', '')
-        products = Product.objects.filter(name__icontains=search_query)
+        filters = {}
+        
+        name = request.GET.get('name')
+        if name:
+            filters['name__icontains'] = name
+
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+        if min_price and max_price:
+            filters['price__range'] = (float(min_price), float(max_price))
+        elif min_price:
+            filters['price__gte'] = float(min_price)
+        elif max_price:
+            filters['price__lte'] = float(max_price)
+
+        type = request.GET.get('type')
+        if type:
+            filters['type__iexact'] = type
+
+        region = request.GET.get('region')
+        if region:
+            filters['region__iexact'] = region
+
+        appellation = request.GET.get('appellation')
+        if appellation:
+            filters['appellation__iexact'] = appellation
+
+        millesime = request.GET.get('millesime')
+        if millesime:
+            filters['millesime'] = int(millesime)
+
+        grape_variety = request.GET.get('grape_variety')
+        if grape_variety:
+            filters['grape_variety__iexact'] = grape_variety
+
+        products = Product.objects.filter(**filters)
         product_list = json.loads(serialize('json', products))
         return JsonResponse(product_list, safe=False)
     except Exception as e:
