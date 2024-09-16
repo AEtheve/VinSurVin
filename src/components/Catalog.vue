@@ -9,8 +9,8 @@ const rangemin = ref(0);
 const rangemax = ref(1000);
 const minPrice = ref(0); 
 const maxPrice = ref(10000000);
-const currentPage = ref(1);
-const productsPerPage = 10;
+const currentPage = ref(1);  
+const totalPages = ref(1);  
 
 function applyFilters() {
   console.log('Filtres appliqués:', minPrice.value, maxPrice.value);
@@ -29,11 +29,14 @@ interface Product {
   type: string;
 }
 
-const fetchProduct = async () => {
-  const response = await fetch(`//${window.location.hostname}:8000/product/`);
+const fetchProduct = async (page = 1) => {
+  const response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
   const dataJSON = await response.json();
   const data = dataJSON.products;
 
+
+  currentPage.value = dataJSON.current_page;
+  totalPages.value = dataJSON.total_pages;
 
 
   products.value = data.map((productData) => {
@@ -59,32 +62,14 @@ onMounted(() => {
   fetchProduct();
 });
 
-const filteredProducts = computed(() => {
-  return products.value.filter(product => {
-    return (
-      product.price >= minPrice.value &&
-      product.price <= maxPrice.value
-    );
-  });
-});
-
-const paginatedProducts = computed(() => {
-  console.log('Filtered Products:', filteredProducts.value); 
-  const start = (currentPage.value - 1) * productsPerPage;
-  const end = start + productsPerPage;
-  return filteredProducts.value.slice(start, end);
-});
-
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredProducts.value.length / productsPerPage);
-});
-
-function changePage(page: number) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
+function changePage(increment: number) {
+  const newPage = currentPage.value + increment;
+  if (newPage >= 1 && newPage <= totalPages.value) {
+    fetchProduct(newPage);
   }
 }
+
+
 
 
 watch(minPrice, (newMinPrice) => {
@@ -189,14 +174,15 @@ function openFilterMenu() {
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
     </button>
     <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px;">
-      <ProductBox v-for="product in paginatedProducts" :product="product" :key="product.pk" />
+      <ProductBox v-for="product in products" :key="product.pk" :product="product" />
+    </div>
+    <div class="pagination-controls" style="text-align: center; margin-top: 120px; z-index: 0">
+      <button @click="changePage(-1)" :disabled="currentPage === 1">Précédent</button>
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+      <button @click="changePage(1)" :disabled="currentPage === totalPages">Suivant</button>
     </div>
     <LowerPage />
-    <div class="pagination-controls">
-      <button @click="changePage(currentPage - 1)" :disabled="currentPage  === 1">Précédent</button>
-      <span>Page {{ currentPage }} / {{ totalPages }}</span>
-      <button @click="changePage(currentPage+ 1)" :disabled="currentPage === totalPages">Suivant</button>
-    </div>
+    
   </div>
 </template>
 
@@ -304,6 +290,12 @@ button:hover {
   background: white;
   color: black;
   border: 2px solid black;
+}
+
+.pagination-controls button:disabled {
+  background: #e0e0e0;
+  color: #b0b0b0;
+  cursor: not-allowed;
 }
 
 </style>

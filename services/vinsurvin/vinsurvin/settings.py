@@ -55,6 +55,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [f'http://{host}' for host in ALLOWED_HOSTS] + [f'https://{host}' for host in ALLOWED_HOSTS]
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'vinsurvin.urls'
 
