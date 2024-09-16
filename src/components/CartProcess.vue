@@ -232,4 +232,10 @@ button {
   font-size: 1.1rem;
   cursor: pointer;
 }
+
+button:hover {
+  background: white;
+  color: black;
+  border: 2px solid black;
+}
 </style>

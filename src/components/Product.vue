@@ -13,7 +13,7 @@ function showPopupNotification(message: string) {
 
   setTimeout(() => {
     showPopup.value = false;
-  }, 3000); // Popup duration
+  }, 3000); 
 }
 const productsInCard = inject('productsInCard');
 
