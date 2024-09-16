@@ -46,6 +46,9 @@ class User(AbstractUser):
                 product.stock -= quantity
                 product.save()
                 
+                if self.cart is None:
+                    self.cart = []
+                    
                 cart_item = next((item for item in self.cart if item['product_id'] == product_id), None)
                 if cart_item:
                     cart_item['quantity'] += quantity
