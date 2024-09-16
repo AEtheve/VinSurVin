@@ -1,6 +1,8 @@
 from django.db import models
 from djongo import models as djongo_models
 from django.core.exceptions import ValidationError
+from django.db import transaction
+
 
 class Product(djongo_models.Model):
     numero = models.AutoField(primary_key=True)
@@ -22,5 +24,18 @@ class Product(djongo_models.Model):
 
     def __str__(self):
         return self.name or "Unnamed Product"
+    
+    def reserve_stock(self, quantity):
+        with transaction.atomic():
+            if self.stock >= quantity:
+                self.stock -= quantity
+                self.save()
+                return True
+            return False
+
+    def release_stock(self, quantity):
+        with transaction.atomic():
+            self.stock += quantity
+            self.save()
 
 
