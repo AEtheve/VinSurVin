@@ -6,6 +6,8 @@ import Catalog from './components/Catalog.vue'
 import Product from './components/Product.vue'
 import Account from './components/Account.vue'
 import CartProcess from './components/CartProcess.vue'
+import LegalMentions from './components/LegalMentions.vue'
+import SalesConditions from './components/SalesConditions.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -56,6 +58,24 @@ const router = createRouter({
             path: '/boutique', 
             name: 'Catalog', 
             component: Catalog 
+        },
+        {
+            path: '/legalmentions',
+            name : 'LegalMentions',
+            components:
+            {
+                default: MenuHeader,
+                LegalMentions
+            },
+        },
+        {
+            path: '/salesconditions',
+            name : 'SalesConditions',
+            components:
+            {
+                default: MenuHeader,
+                SalesConditions
+            },
         },
     ],
 });
