@@ -241,3 +241,23 @@ def cancel_order(request):
         return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def delete_cart(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        user.delete_cart()
+        return JsonResponse({'message': 'Panier vidé avec succès'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

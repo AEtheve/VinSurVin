@@ -75,6 +75,10 @@ class User(AbstractUser):
                 self.save()
                 return True
             return False
+    
+    def delete_cart(self):
+        self.cart = []
+        self.save()
         
     def get_cart(self):
         return self.cart
