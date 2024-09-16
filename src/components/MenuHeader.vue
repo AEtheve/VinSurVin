@@ -2,13 +2,13 @@
 import { ref, computed, inject } from 'vue';
 
 interface ProductItem {
-  pk: number;
-  name: string;
-  price: number;
-  promo: number;
-  image: string;
-  description: string;
-  quantity: number;
+	pk: number;
+	name: string;
+	price: number;
+	promo: number;
+	image: string;
+	description: string;
+	quantity: number;
 }
 
 const cartOpen = inject('cartOpen');
@@ -19,22 +19,30 @@ const isSearchActive = ref(false);
 const isConnected = document.cookie.includes("csrftoken");
 
 function focusSearch() {
-  const inputSearch = document.getElementById("input-search");
-  const btnSearch = document.getElementById("btn-search");
+	const inputSearch = document.getElementById("input-search");
+	const btnSearch = document.getElementById("btn-search");
 
-  if (inputSearch) {
-    isSearchActive.value = true;
-    inputSearch.style.display = 'block';
-    inputSearch.focus();
-    btnSearch.style.display = 'none';
+	if (inputSearch) {
+		isSearchActive.value = true;
+		inputSearch.style.display = 'block';
+		inputSearch.focus();
+		btnSearch.style.display = 'none';
 
-    inputSearch.addEventListener('blur', () => {
-      isSearchActive.value = false;
-      btnSearch.style.display = 'inline-block';
-    });
-  }
+		inputSearch.addEventListener('blur', () => {
+			isSearchActive.value = false;
+			btnSearch.style.display = 'inline-block';
+		});
+	}
 }
 
+const totalQuantity = computed(() => {
+	return productsInCard.value.reduce((total, item) => total + item.quantity, 0);
+});
+
+
+function clearCart() {
+	productsInCard.value = [];
+}
 </script>
 
 
@@ -88,7 +96,8 @@ function focusSearch() {
 				</svg>
 			</li>
 			<li>
-				<router-link v-if="isConnected" to="/account" :class="{ active: $route.path === '/account' }">Compte</router-link>
+				<router-link v-if="isConnected" to="/account"
+					:class="{ active: $route.path === '/account' }">Compte</router-link>
 				<router-link v-else to="/account" :class="{ active: $route.path === '/account' }">Se connecter /
 					S'inscrire</router-link>
 			</li>
@@ -143,10 +152,16 @@ li {
 	position: relative;
 }
 
-.active {
+li:hover {
 	text-decoration: underline;
+	text-underline-offset: 0.5em; 
+}
+
+.active {
+	text-decoration: underline;	
 	text-underline-offset: 0.5em;
 }
+
 
 #promo-border {
 	height: 40px;
@@ -222,4 +237,5 @@ li {
 		width: 90%;
 		margin-bottom: 10px;
 	}
-}</style>
+}
+</style>

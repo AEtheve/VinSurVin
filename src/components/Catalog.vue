@@ -67,7 +67,7 @@ const filteredProducts = computed(() => {
 });
 
 const paginatedProducts = computed(() => {
-  console.log('Filtered Products:', filteredProducts.value); // Log filtered products to inspect
+  console.log('Filtered Products:', filteredProducts.value); 
   const start = (currentPage.value - 1) * productsPerPage;
   const end = start + productsPerPage;
   return filteredProducts.value.slice(start, end);

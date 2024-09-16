@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import LowerPage from './LowerPage.vue';
 
 const $routes = useRoute();
 
+const showPopup = ref(false);
+const popupMessage = ref('');
+
+function showPopupNotification(message: string) {
+  popupMessage.value = message;
+  showPopup.value = true;
+
+  setTimeout(() => {
+    showPopup.value = false;
+  }, 3000); 
+}
 const productsInCard = inject('productsInCard');
 
 const product = ref({
@@ -70,6 +80,8 @@ function closeModal() {
   showModal.value = false;
 }
 
+
+
 function addToCart() {
   console.log('Adding product to cart:', product.value);
 
@@ -93,6 +105,11 @@ function addToCart() {
 
   console.log('Updated products in cart:', productsInCard.value);
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+
+  showPopupNotification('Produit ajouté au panier !');
+
+
+
 }
 
 
@@ -139,7 +156,12 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
-  <LowerPage></LowerPage>
+  <LowerPage></LowerPage> 
+  <transition name="fade">
+    <div v-if="showPopup" class="popup-notification">
+      {{ popupMessage }}
+    </div>
+  </transition>
 </template>
 
 <style scoped>
@@ -293,10 +315,42 @@ function addToCart() {
   
 }
 
+.feedback-message {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  animation: fadein 1s;
+}
+
+
+
+.popup-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  transition: opacity 0.3s ease;
+}
+
+.popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.popup-notification.fade-enter, .popup-notification.fade-leave-to {
+  opacity: 0;
+}
 
 button:hover {
   background: white;
   color: black;
   border: 2px solid black;
 }
+
+
+
 </style>
