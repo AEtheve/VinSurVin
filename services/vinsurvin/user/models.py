@@ -92,3 +92,11 @@ class User(AbstractUser):
 
     def get_orders(self):
         return self.orders
+    
+    def get_info(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'createdAt': self.date_joined,
+            'lastLogin': self.last_login
+        }

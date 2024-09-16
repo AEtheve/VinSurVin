@@ -147,7 +147,7 @@ def get_user_info(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
 
-        return JsonResponse({'orders': user.get_orders()})
+        return JsonResponse(user.get_info())
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
