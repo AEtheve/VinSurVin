@@ -6,19 +6,36 @@ from .models import Product
 import json
 from django.core.serializers import serialize
 from bson import ObjectId
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @require_http_methods(["GET"])
 def get_products(request):
     try:
+        page = request.GET.get('page', 1)
         products = Product.objects.all()
-        product_list = json.loads(serialize('json', products))
-        return JsonResponse(product_list, safe=False)
+        paginator = Paginator(products, 12) 
+        
+        try:
+            products_page = paginator.page(page)
+        except PageNotAnInteger:
+            products_page = paginator.page(1)
+        except EmptyPage:
+            products_page = paginator.page(paginator.num_pages)
+        
+        product_list = json.loads(serialize('json', products_page))
+        
+        return JsonResponse({
+            'products': product_list,
+            'total_pages': paginator.num_pages,
+            'current_page': products_page.number
+        }, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
 @require_http_methods(["GET"])
 def search_product(request):
     try:
+        page = request.GET.get('page', 1)
         filters = {}
         
         name = request.GET.get('name')
@@ -55,8 +72,22 @@ def search_product(request):
             filters['grape_variety__iexact'] = grape_variety
 
         products = Product.objects.filter(**filters)
-        product_list = json.loads(serialize('json', products))
-        return JsonResponse(product_list, safe=False)
+        paginator = Paginator(products, 12) 
+        
+        try:
+            products_page = paginator.page(page)
+        except PageNotAnInteger:
+            products_page = paginator.page(1)
+        except EmptyPage:
+            products_page = paginator.page(paginator.num_pages)
+        
+        product_list = json.loads(serialize('json', products_page))
+        
+        return JsonResponse({
+            'products': product_list,
+            'total_pages': paginator.num_pages,
+            'current_page': products_page.number
+        }, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
