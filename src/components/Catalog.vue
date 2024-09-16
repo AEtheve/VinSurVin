@@ -292,4 +292,10 @@ button:hover {
   border: 2px solid black;
 }
 
+.pagination-controls button:disabled {
+  background: #e0e0e0;
+  color: #b0b0b0;
+  cursor: not-allowed;
+}
+
 </style>
