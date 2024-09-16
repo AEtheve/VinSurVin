@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide } from 'vue';
+import { provide ,Ref} from 'vue';
 import { defineProps, ref,inject, onMounted } from 'vue';
 
 
@@ -34,7 +34,7 @@ const props = defineProps<{
 
 
 
-const productsInCard = inject('productsInCard');
+const productsInCard = inject('productsInCard') as Ref<Product[]>;
 
 const quantity = ref(1);
 
@@ -56,7 +56,7 @@ function addToCart() {
     body: JSON.stringify({
       product: props.product.pk,
       quantity: quantity.value
-    })
+    })  
   }).then(response => response.json())
   .then(data => {
     
