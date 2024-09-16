@@ -81,8 +81,10 @@ def add_to_cart(request):
 
         print(user, product_id, quantity)
         
-        user.add_to_cart(product_id, quantity)
-        return JsonResponse({'message': 'Produit ajouté au panier avec succès', 'cart': user.cart})
+        if user.add_to_cart(product_id, quantity):
+            return JsonResponse({'message': 'Produit ajouté au panier avec succès', 'cart': user.get_cart()})
+        else:
+            return JsonResponse({'error': 'Stock insuffisant'}, status=404)
     
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Données JSON invalides'}, status=400)
