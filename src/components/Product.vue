@@ -4,8 +4,17 @@ import { useRoute } from 'vue-router';
 
 const $routes = useRoute();
 
-const feedbackMessage = ref('');
+const showPopup = ref(false);
+const popupMessage = ref('');
 
+function showPopupNotification(message: string) {
+  popupMessage.value = message;
+  showPopup.value = true;
+
+  setTimeout(() => {
+    showPopup.value = false;
+  }, 3000); // Popup duration
+}
 const productsInCard = inject('productsInCard');
 
 const product = ref({
@@ -97,18 +106,8 @@ function addToCart() {
   console.log('Updated products in cart:', productsInCard.value);
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 
-  feedbackMessage.value = 'Produit ajouté au panier !';
+  showPopupNotification('Produit ajouté au panier !');
 
-  setTimeout(() => {
-    const feedbackElement = document.querySelector('.feedback-message');
-    if (feedbackElement) {
-      feedbackElement.classList.add('fadeout');
-    }
-  }, 4000);
-
-  setTimeout(() => {
-    feedbackMessage.value = '';
-  }, 5000);
 
 
 }
@@ -150,7 +149,6 @@ function addToCart() {
         </div>
         <div class="add-to-cart-container">
           <button class="cart_button" @click="addToCart" >Ajouter au panier</button>
-          <p v-if="feedbackMessage" class="feedback-message">{{ feedbackMessage }}</p>
         </div>
       </div>
     </div>
@@ -158,7 +156,12 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
-  <LowerPage></LowerPage>
+  <LowerPage></LowerPage> 
+  <transition name="fade">
+    <div v-if="showPopup" class="popup-notification">
+      {{ popupMessage }}
+    </div>
+  </transition>
 </template>
 
 <style scoped>
@@ -321,33 +324,25 @@ function addToCart() {
 
 
 
-.feedback-message {
-  color: green;
-  font-size: 1rem;
-  margin-bottom: 10px;
-  animation: fadein 1s;
+.popup-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  transition: opacity 0.3s ease;
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.fadeout {
-  animation: fadeout 1s forwards;
-}
-
-@keyframes fadeout {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+.popup-notification.fade-enter, .popup-notification.fade-leave-to {
+  opacity: 0;
 }
 
 button:hover {

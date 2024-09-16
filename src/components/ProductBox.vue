@@ -2,6 +2,19 @@
 import { provide } from 'vue';
 import { defineProps, ref,inject, onMounted } from 'vue';
 
+
+const showPopup = ref(false);
+const popupMessage = ref('');
+
+function showPopupNotification(message: string) {
+  popupMessage.value = message;
+  showPopup.value = true;
+
+  setTimeout(() => {
+    showPopup.value = false;
+  }, 3000); 
+}
+
 const props = defineProps<{
   product: {
     name: string;
@@ -56,6 +69,8 @@ function addToCart() {
     description: props.product.description,
     quantity: quantity.value
   });
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+  showPopupNotification('Produit ajouté au panier !');
   });
 
 }
@@ -103,10 +118,38 @@ provide('addToCart', addToCart);
       </div>
     </div>
   </div>
+  <transition name="fade">
+    <div v-if="showPopup" class="popup-notification">
+      {{ popupMessage }}
+    </div>
+  </transition>
 </template>
 
 
 <style scoped>
+
+.popup-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  transition: opacity 0.3s ease;
+}
+
+.popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.popup-notification.fade-enter, .popup-notification.fade-leave-to {
+  opacity: 0;
+}
+
+
 .quantity_input {
   border: 1px solid black;
   padding: 10px;
