@@ -31,7 +31,9 @@ interface Product {
 
 const fetchProduct = async () => {
   const response = await fetch(`//${window.location.hostname}:8000/product/`);
-  const data = await response.json();
+  const dataJSON = await response.json();
+  const data = dataJSON.products;
+
 
 
   products.value = data.map((productData) => {
