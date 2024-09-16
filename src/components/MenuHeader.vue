@@ -152,10 +152,16 @@ li {
 	position: relative;
 }
 
-.active {
+li:hover {
 	text-decoration: underline;
+	text-underline-offset: 0.5em; 
+}
+
+.active {
+	text-decoration: underline;	
 	text-underline-offset: 0.5em;
 }
+
 
 #promo-border {
 	height: 40px;

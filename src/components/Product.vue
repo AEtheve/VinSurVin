@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import LowerPage from './LowerPage.vue';
 
 const $routes = useRoute();
 
@@ -72,6 +71,8 @@ function closeModal() {
   showModal.value = false;
 }
 
+
+
 function addToCart() {
   console.log('Adding product to cart:', product.value);
 
@@ -104,6 +105,10 @@ function addToCart() {
       feedbackElement.classList.add('fadeout');
     }
   }, 4000);
+
+  setTimeout(() => {
+    feedbackMessage.value = '';
+  }, 5000);
 
 
 }
