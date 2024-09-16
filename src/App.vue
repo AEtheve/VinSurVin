@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
+import { ref, provide, computed } from 'vue';
 const cartOpen = ref(false);
 const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
+const isCartEmpty = computed(() => productsInCard.value.length === 0);
 
+
+provide('isCartEmpty', isCartEmpty);
 provide('cartOpen', cartOpen);
 provide('productsInCard', productsInCard);
+
+
 
 function computeSubtotal() {
   let subtotal = 0;
@@ -17,7 +22,10 @@ function computeSubtotal() {
 function clearCart() {
   productsInCard.value = [];
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+  console.log('Cart cleared', productsInCard.value);
+  console.log('Is Cart Empty:', isCartEmpty.value); // Debug line
 }
+
 
 function removeProductFromCart(id) {
   const index = productsInCard.value.findIndex((product) => product.id === id);
@@ -65,7 +73,9 @@ provide('removeProductFromCart', removeProductFromCart);
 
       <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
       <router-link to="/cartprocess"><button id="validate-cart" >Valider mon panier</button></router-link>
-      <button @click="clearCart" style="padding: 10px 20px; background-color: rgb(252, 107, 107); color: white; border: none; cursor: pointer;">Vider le panier</button>
+      <button @click="clearCart" :disabled="isCartEmpty" class="clear-cart-button">
+        Vider le panier
+      </button>
     </div>
   </div>
 </template>
@@ -123,11 +133,35 @@ button {
   border-radius: 10px;
   font-size: 1.1rem;
   cursor: pointer;
+  border: 1px solid white;
+
 }
 
 button:hover {
   background: white;
   color: black;
-  border: 2px solid black;
+  border: 1px solid black;
+}
+
+.clear-cart-button {
+  padding: 10px 20px;
+  background-color: rgb(252, 107, 107);
+  color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.clear-cart-button:hover {
+  background-color: rgb(233, 76, 76); 
+}
+
+.clear-cart-button:disabled {
+  background-color: #ccc; 
+  color: #666; 
+  cursor: not-allowed;
+  transform: none; 
 }
 </style>
