@@ -36,22 +36,28 @@ function decrement() {
 }
 
 function addToCart() {
-  const existingProductIndex = productsInCard.value.findIndex(item => item.pk === props.product.pk);
-
-  if (existingProductIndex !== -1) {
-    productsInCard.value[existingProductIndex].quantity += quantity.value;
-
-  } else {
-    productsInCard.value.push({
-      pk: props.product.pk,
-      name: props.product.name,
-      price: props.product.price,
-      promo: props.product.promo,
-      image: props.product.image,
+  fetch('http://localhost:8000/add-to-cart/', {
+    method: 'POST',
+    credentials: "include",
+    mode: 'cors',
+    body: JSON.stringify({
+      product: props.product.pk,
       quantity: quantity.value
-    });
-  }
-  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+    })
+  }).then(response => response.json())
+  .then(data => {
+    
+  productsInCard.value.push({
+    pk: props.product.pk,
+    name: props.product.name,
+    price: props.product.price,
+    promo: props.product.promo,
+    image: props.product.image,
+    description: props.product.description,
+    quantity: quantity.value
+  });
+  });
+
 }
 
 provide('addToCart', addToCart);

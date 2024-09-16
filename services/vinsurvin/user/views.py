@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import json
@@ -38,22 +39,20 @@ def login(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            username = data.get('email')
+            username = data.get('username')
             password = data.get('password')
 
             if not all([username, password]):
                 return JsonResponse({'error': 'Tous les champs sont requis'})
             
-            user = User.objects.get(username=username)
-
-            if not user.check_password(password):
-                return JsonResponse({'error': 'Mot de passe incorrect'}, status=400)
-
-            user_data = {
-                'date_joined': user.date_joined,
-            }
+            user = authenticate(request, username=username, password=password)
             
-            return JsonResponse({'message': 'Connexion réussie', 'user': user_data})
+            if user is not None:
+                auth_login(request, user)
+                return JsonResponse({'message': 'Connexion réussie', 'user': user.username})
+
+            return JsonResponse({'error': 'Nom d\'utilisateur ou mot de passe incorrect'}, status=400)
+        
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Données JSON invalides'}, status=400)
         except User.DoesNotExist:
@@ -69,20 +68,18 @@ def login(request):
 def add_to_cart(request):
     try:
         data = json.loads(request.body)
-        username = data.get('username')
         product_id = data.get('product')
         quantity = int(data.get('quantity', 1))
 
-        if not all([username, product_id]):
-            return JsonResponse({'error': 'Username et Product ID sont requis'}, status=400)
+        if not product_id:
+            return JsonResponse({'error': 'Product ID est requis'}, status=400)
 
-        if quantity <= 0:
-            return JsonResponse({'error': 'La quantité doit être positive'}, status=400)
+        user = request.user
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'Utilisateur non authentifié'}, status=401)
+
+        print(user, product_id, quantity)
         
         user.add_to_cart(product_id, quantity)
         return JsonResponse({'message': 'Produit ajouté au panier avec succès', 'cart': user.cart})
@@ -124,7 +121,7 @@ def remove_from_cart(request):
 @require_http_methods(["GET"])
 def get_cart(request):
     try:
-        username = request.GET.get('username')
+        username = request.user
 
         if not username:
             return JsonResponse({'error': 'Username est requis'}, status=400)
@@ -136,7 +133,24 @@ def get_cart(request):
         return JsonResponse({'cart': user.get_cart()})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
+        
+@require_http_methods(["GET"])
+def get_user_info(request):
+    try:
+        username = request.user
+
+        if not username:
+            return JsonResponse({'error': 'Username est requis'}, status=400)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+
+        return JsonResponse({'orders': user.get_orders()})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def create_order(request):
@@ -173,7 +187,6 @@ def get_orders(request):
         return JsonResponse({'orders': user.get_orders()})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 @csrf_exempt
 @require_http_methods(["POST"])
