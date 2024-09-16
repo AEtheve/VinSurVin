@@ -1,0 +1,28 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+    command: npm run dev -- --host 0.0.0.0
+
+  backend:
+    build:
+      context: ./services/vinsurvin
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/vinsurvin:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=vinsurvin.settings
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+    command: python manage.py runserver 0.0.0.0:8000
