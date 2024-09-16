@@ -17,7 +17,7 @@ onMounted(() => {
     document.getElementById("formRegister").addEventListener("submit", function (event) {
       event.preventDefault();
 
-      fetch("http://localhost:8000/user/new", {
+      fetch(`//${window.location.hostname}:8000/user/new`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ onMounted(() => {
     document.getElementById("formLogin").addEventListener("submit", function (event) {
       event.preventDefault();
 
-      fetch("http://localhost:8000/user/login", {
+      fetch(`//${window.location.hostname}:8000/user/login`, {
         method: "POST",
         credentials: "include",
         mode: 'cors',
@@ -72,7 +72,7 @@ function formatDate(date) {
 }
 
 function getInfos() {
-  fetch("http://localhost:8000/user/info", {
+  fetch(`//${window.location.hostname}:8000/user/info`, {
     method: "GET",
     credentials: "include",
     mode: 'cors',

@@ -49,7 +49,7 @@ function decrement() {
 }
 
 function addToCart() {
-  fetch('http://localhost:8000/add-to-cart/', {
+    fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
     method: 'POST',
     credentials: "include",
     mode: 'cors',
@@ -58,7 +58,7 @@ function addToCart() {
       quantity: quantity.value
     })  
   }).then(response => response.json())
-  .then(data => {
+  .then(_ => {
     
   productsInCard.value.push({
     pk: props.product.pk,
