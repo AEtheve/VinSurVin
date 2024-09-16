@@ -97,12 +97,12 @@ def add_to_cart(request):
 def remove_from_cart(request):
     try:
         data = json.loads(request.body)
-        username = data.get('username')
+        username = request.user
         product_id = data.get('product')
         quantity = int(data.get('quantity', 1))
 
-        if not all([username, product_id]):
-            return JsonResponse({'error': 'Username et Product ID sont requis'}, status=400)
+        if not all([product_id, quantity]):
+            return JsonResponse({'error': 'Product ID et quantity sont requis'}, status=400)
 
         try:
             user = User.objects.get(username=username)
