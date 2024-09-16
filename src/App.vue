@@ -34,6 +34,8 @@ provide('removeProductFromCart', removeProductFromCart);
   <router-view name="Account" />
   <router-view name="Product" />
   <router-view name="CartProcess" />
+  <router-view name="LegalMentions" />
+  <router-view name="SalesConditions" />
 
   <div id="cart_box" v-if="cartOpen">
     <div id="cart_content">

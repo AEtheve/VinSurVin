@@ -1,4 +1,7 @@
-<script>
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
 </script>
 
 <template>
@@ -6,6 +9,25 @@
     <img src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/bandeau_boissons_alcooliques.jpg" alt="wine_bottom" style="width: 100%; height: 150px; object-fit: scale-down;">
     @Vin/20 Corporation
 </div>
+<div class="center">
+    <a href="/legalmentions" class="button">Legal mentions</a>
+    <a href="/salesconditions" class="button">CGV</a>
+</div>
 </template>
+    
+<style>
+.center {
+    text-align: center;
+    padding: 20px;
+}
 
-<style></style>
+.button {
+    padding-right: 20px;
+    margin-bottom: 50px;
+}
+
+.button:hover {
+    background-color: #f1f1f1;
+    color: black;
+}
+</style>
