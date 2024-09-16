@@ -156,12 +156,13 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
-  <LowerPage></LowerPage> 
+  <LowerPage>
   <transition name="fade">
     <div v-if="showPopup" class="popup-notification">
       {{ popupMessage }}
     </div>
   </transition>
+</LowerPage> 
 </template>
 
 <style scoped>

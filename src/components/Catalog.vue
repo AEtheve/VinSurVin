@@ -30,7 +30,7 @@ interface Product {
 }
 
 const fetchProduct = async () => {
-  const response = await fetch('http://localhost:8000/product/');
+  const response = await fetch(`//${window.location.hostname}:8000/product/`);
   const data = await response.json();
 
 
