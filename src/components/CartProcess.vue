@@ -7,6 +7,7 @@ import LowerPage from './LowerPage.vue';
 function removeProductFromCart(id) {
   const index = productsInCard.value.findIndex((product) => product.id === id);
   productsInCard.value.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 }
 onMounted(() => {
   const cartOpen = inject("cartOpen");
@@ -33,11 +34,9 @@ function validateCart() {
 function submitDeliveryForm() {
   step.value = 2;
 }
-// Variables pour stocker les données du formulaire
 const nom = ref('');
 const address = ref('');
 const city = ref('');
-//Fonction pour savoir si les champs du formaulaire de Livraison est remplie
 function isFormDeliveryValid() {
   return (
     nom.value &&
@@ -116,7 +115,6 @@ provide('submitDeliveryForm', submitDeliveryForm);
           <div style="font-size: 1.2rem; font-weight: bold;">{{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
         </div>
         <button v-if="step === 0" @click="validateCart">Valider mon panier</button>
-
       </div>
     </div>
   </div>

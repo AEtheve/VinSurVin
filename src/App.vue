@@ -14,9 +14,15 @@ function computeSubtotal() {
   return subtotal;
 }
 
+function clearCart() {
+  productsInCard.value = [];
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+}
+
 function removeProductFromCart(id) {
   const index = productsInCard.value.findIndex((product) => product.id === id);
   productsInCard.value.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 }
 provide('removeProductFromCart', removeProductFromCart);
 </script>
@@ -59,6 +65,7 @@ provide('removeProductFromCart', removeProductFromCart);
 
       <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
       <router-link to="/cartprocess"><button id="validate-cart" >Valider mon panier</button></router-link>
+      <button @click="clearCart" style="padding: 10px 20px; background-color: rgb(252, 107, 107); color: white; border: none; cursor: pointer;">Vider le panier</button>
     </div>
   </div>
 </template>
@@ -116,5 +123,11 @@ button {
   border-radius: 10px;
   font-size: 1.1rem;
   cursor: pointer;
+}
+
+button:hover {
+  background: white;
+  color: black;
+  border: 2px solid black;
 }
 </style>

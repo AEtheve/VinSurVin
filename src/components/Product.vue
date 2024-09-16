@@ -5,6 +5,8 @@ import LowerPage from './LowerPage.vue';
 
 const $routes = useRoute();
 
+const feedbackMessage = ref('');
+
 const productsInCard = inject('productsInCard');
 
 const product = ref({
@@ -93,6 +95,17 @@ function addToCart() {
 
   console.log('Updated products in cart:', productsInCard.value);
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+
+  feedbackMessage.value = 'Produit ajouté au panier !';
+
+  setTimeout(() => {
+    const feedbackElement = document.querySelector('.feedback-message');
+    if (feedbackElement) {
+      feedbackElement.classList.add('fadeout');
+    }
+  }, 4000);
+
+
 }
 
 
@@ -132,6 +145,7 @@ function addToCart() {
         </div>
         <div class="add-to-cart-container">
           <button class="cart_button" @click="addToCart" >Ajouter au panier</button>
+          <p v-if="feedbackMessage" class="feedback-message">{{ feedbackMessage }}</p>
         </div>
       </div>
     </div>
@@ -293,10 +307,50 @@ function addToCart() {
   
 }
 
+.feedback-message {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  animation: fadein 1s;
+}
+
+
+
+.feedback-message {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  animation: fadein 1s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeout {
+  animation: fadeout 1s forwards;
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 
 button:hover {
   background: white;
   color: black;
   border: 2px solid black;
 }
+
+
+
 </style>
