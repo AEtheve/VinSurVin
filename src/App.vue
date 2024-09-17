@@ -5,6 +5,18 @@ const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
 const isCartEmpty = computed(() => productsInCard.value.length === 0);
 const dialogMenuMobile = ref(false);
 
+const showAgeCheckDialog = ref(localStorage.getItem('adultCheck') !== 'true');
+
+function confirmAdult() {
+  localStorage.setItem('adultCheck', 'true');
+  showAgeCheckDialog.value = false;
+}
+
+function refuseAdult() {
+  localStorage.setItem('adultCheck', 'false');
+  alert('Vous devez être majeur pour accéder à ce site.');
+}
+
 
 provide('isCartEmpty', isCartEmpty);
 provide('cartOpen', cartOpen);
@@ -57,6 +69,18 @@ provide('removeProductFromCart', removeProductFromCart);
 </script>
 
 <template>
+
+<div v-if="showAgeCheckDialog" class="age-check-dialog">
+    <div class="age-check-content">
+      <h2>Êtes-vous majeur ?</h2>
+      <p>Vous devez avoir 18 ans ou plus pour accéder à ce site.</p>
+      <div class="age-check-actions">
+        <button @click="confirmAdult">Oui, je suis majeur</button>
+        <button @click="refuseAdult">Non</button>
+      </div>
+    </div>
+  </div>
+
   <router-view />
   <router-view name="Home" />
   <router-view name="Catalog" />
@@ -186,4 +210,33 @@ button:hover {
   cursor: not-allowed;
   transform: none;
 }
+
+
+.age-check-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.age-check-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.age-check-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
 </style>
