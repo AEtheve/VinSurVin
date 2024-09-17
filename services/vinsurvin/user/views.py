@@ -25,7 +25,7 @@ def create_user(request):
             if not all([username, email, password]):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
             
-            user = User.objects.create_user(username=username, email=email, password=password)
+            user = User.objects.create_user(username=username, email=email, password=password, is_anonymous_user=False)
 
             return JsonResponse({'message': 'User created successfully'}, status=201)
         except json.JSONDecodeError:
@@ -213,7 +213,7 @@ def delete_cart(request):
 def check_user_login(request):
     if isinstance(request.user, AnonymousUser):
         username = str(uuid.uuid4())
-        user = User.objects.create_user(username=username)
+        user = User.objects.create_user(username=username, is_anonymous_user=True)
         auth_login(request, user)
         return user
     return request.user
