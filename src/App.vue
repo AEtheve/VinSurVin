@@ -47,8 +47,11 @@ function clearCart() {
     method: 'POST',
     credentials: 'include',
     mode: 'cors',
+  }).then(() => {
+    window.location.reload(); 
   });
 }
+
 
 function removeProductFromCart(id, quantity) {
   const index = productsInCard.value.findIndex((product) => product.pk === id);
