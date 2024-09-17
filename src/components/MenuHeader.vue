@@ -277,7 +277,7 @@ li:hover {
 .mobile-menu-content {
 	background: white;
 	height: 100%;
-	width: 70%;
+	width: 70vw;
 	display: inline-flex;
 	flex-direction: column;
 }

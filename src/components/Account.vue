@@ -125,7 +125,7 @@ function getInfos() {
       </div>
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
+        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;" playsinline></video>
       </div>
 
     </div>
