@@ -247,7 +247,7 @@ def cancel_order(request):
 def delete_cart(request):
     try:
         data = json.loads(request.body)
-        username = data.get('username')
+        username = request.user
 
         if not username:
             return JsonResponse({'error': 'Username est requis'}, status=400)
