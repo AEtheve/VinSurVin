@@ -77,8 +77,13 @@ class User(AbstractUser):
             return False
     
     def delete_cart(self):
-        self.cart = []
-        self.save()
+        with transaction.atomic():
+            for item in self.cart:
+                product = Product.objects.select_for_update().get(pk=item['product_id'])
+                product.stock += item['quantity']
+                product.save()
+            self.cart = []
+            self.save()
         
     def get_cart(self):
         return self.cart
