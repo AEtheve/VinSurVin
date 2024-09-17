@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, watch , computed} from 'vue';
+import { ref, onMounted, watch , computed, inject} from 'vue';
 import ProductBox from './ProductBox.vue';
 import LowerPage from './LowerPage.vue';
 
-const products = ref<Product[]>([]);
+const products = inject('productlist');
 const showFilterMenu = ref(false);
 const rangemin = ref(0);
 const rangemax = ref(1000);
@@ -59,7 +59,7 @@ const fetchProduct = async (page = 1) => {
 };
 
 onMounted(() => {
-  fetchProduct();
+  // fetchProduct();
 });
 
 function changePage(increment: number) {

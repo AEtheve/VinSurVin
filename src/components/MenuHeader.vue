@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue';
+import router from '../Router';
 
 interface ProductItem {
 	pk: number;
@@ -15,10 +16,25 @@ const isMobileMenuOpen = ref(false);
 
 const cartOpen = inject('cartOpen');
 const productsInCard = inject('productsInCard');
+const productlist = inject('productlist');
 
 const isSearchActive = ref(false);
 
 const isConnected = document.cookie.includes("csrftoken");
+
+async function handleEnterPress() {
+  const filtre = document.getElementById("input-search");
+  const searchTerm = filtre.value;
+  try {
+    const response = await fetch(`http://localhost:8000/product/search/?name=${searchTerm}`);
+    const data = await response.json();
+	productlist.value = data.products;
+	router.push('/boutique');
+  } catch (error) {
+    console.error('Erreur lors de la recherche:', error);
+  }
+}
+
 
 function focusSearch() {
 	const inputSearch = document.getElementById("input-search");
@@ -97,7 +113,7 @@ function toggleMobileMenu() {
 			<li>
 				<router-link to="/boutique" :class="{ active: $route.path === '/boutique' }">Boutique</router-link>
 			</li>
-			<li @click="focusSearch" class="search-container">
+			<li @click="focusSearch" @keyup.enter="handleEnterPress" class="search-container">
 				<span id="btn-search">Rechercher</span>
 				<input type="text" id="input-search" />
 				<svg v-if="isSearchActive" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"

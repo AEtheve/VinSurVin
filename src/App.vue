@@ -4,12 +4,14 @@ const cartOpen = ref(false);
 const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
 const isCartEmpty = computed(() => productsInCard.value.length === 0);
 const dialogMenuMobile = ref(false);
+const productlist = ref([]);
 
 
 provide('isCartEmpty', isCartEmpty);
 provide('cartOpen', cartOpen);
 provide('productsInCard', productsInCard);
 provide('dialogMenuMobile', dialogMenuMobile);
+provide('productlist', productlist);
 
 
 
