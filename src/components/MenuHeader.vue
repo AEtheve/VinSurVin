@@ -42,10 +42,6 @@ const totalQuantity = computed(() => {
 });
 
 
-function clearCart() {
-	productsInCard.value = [];
-}
-
 function toggleMobileMenu() {
 	isMobileMenuOpen.value = !isMobileMenuOpen.value;
 }

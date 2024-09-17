@@ -26,6 +26,8 @@ function clearCart() {
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
   console.log('Cart cleared', productsInCard.value);
   console.log('Is Cart Empty:', isCartEmpty.value);
+
+  
 }
 
 function removeProductFromCart(id, quantity) {

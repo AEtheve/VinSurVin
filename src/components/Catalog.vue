@@ -69,9 +69,6 @@ function changePage(increment: number) {
   }
 }
 
-
-
-
 watch(minPrice, (newMinPrice) => {
   if (newMinPrice >= maxPrice.value) {
     minPrice.value = maxPrice.value;

@@ -22,17 +22,17 @@ def create_user(request):
             password = data.get('password')
 
             if not all([username, email, password]):
-                return JsonResponse({'error': 'Tous les champs sont requis'})
+                return JsonResponse({'error': 'All fields are required'}, status=400)
             
             user = User.objects.create_user(username=username, email=email, password=password)
 
-            return JsonResponse({'message': 'Utilisateur créé avec succès'})
+            return JsonResponse({'message': 'User created successfully'}, status=201)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Données JSON invalides'}, status=400)
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
-        return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
     
 @csrf_exempt
 def login(request):
@@ -43,24 +43,24 @@ def login(request):
             password = data.get('password')
 
             if not all([username, password]):
-                return JsonResponse({'error': 'Tous les champs sont requis'})
+                return JsonResponse({'error': 'All fields are required'}, status=400)
             
             user = authenticate(request, username=username, password=password)
             
             if user is not None:
                 auth_login(request, user)
-                return JsonResponse({'message': 'Connexion réussie', 'user': user.username})
+                return JsonResponse({'message': 'Login successful', 'user': user.username}, status=200)
 
-            return JsonResponse({'error': 'Nom d\'utilisateur ou mot de passe incorrect'}, status=400)
+            return JsonResponse({'error': 'Incorrect username or password'}, status=401)
         
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Données JSON invalides'}, status=400)
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
         except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+            return JsonResponse({'error': 'User not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
-        return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
     
 
 @csrf_exempt
@@ -72,22 +72,20 @@ def add_to_cart(request):
         quantity = int(data.get('quantity', 1))
 
         if not product_id:
-            return JsonResponse({'error': 'Product ID est requis'}, status=400)
+            return JsonResponse({'error': 'Product ID is required'}, status=400)
 
         user = request.user
 
-        if not user.is_authenticated:
-            return JsonResponse({'error': 'Utilisateur non authentifié'}, status=401)
-
-        print(user, product_id, quantity)
+        if not user:
+            return JsonResponse({'error': 'Username not found'}, status=400)
         
         if user.add_to_cart(product_id, quantity):
-            return JsonResponse({'message': 'Produit ajouté au panier avec succès', 'cart': user.get_cart()})
+            return JsonResponse({'message': 'Product added to cart successfully', 'cart': user.get_cart()}, status=200)
         else:
-            return JsonResponse({'error': 'Stock insuffisant'}, status=404)
+            return JsonResponse({'error': 'Insufficient stock'}, status=400)
     
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Données JSON invalides'}, status=400)
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
@@ -97,25 +95,24 @@ def add_to_cart(request):
 def remove_from_cart(request):
     try:
         data = json.loads(request.body)
-        username = request.user
         product_id = data.get('product')
         quantity = int(data.get('quantity', 1))
 
-        if not all([product_id, quantity]):
-            return JsonResponse({'error': 'Product ID et quantity sont requis'}, status=400)
+        if not all([quantity, product_id]):
+            return JsonResponse({'error': 'Quantity and Product ID are required'}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
+        user = request.user
+
+        if not user:
+            return JsonResponse({'error': 'Username not found'}, status=400)
 
         if user.remove_from_cart(product_id, quantity):
-            return JsonResponse({'message': 'Produit retiré du panier avec succès', 'cart': user.cart})
+            return JsonResponse({'message': 'Product removed from cart successfully', 'cart': user.cart}, status=200)
         else:
-            return JsonResponse({'error': 'Produit non trouvé dans le panier'}, status=404)
+            return JsonResponse({'error': 'Product not found in cart'}, status=404)
 
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Données JSON invalides'}, status=400)
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -126,13 +123,9 @@ def get_cart(request):
         username = request.user
 
         if not username:
-            return JsonResponse({'error': 'Username est requis'}, status=400)
-
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
-        return JsonResponse({'cart': user.get_cart()})
+            return JsonResponse({'error': 'Username not found'}, status=400)
+        
+        return JsonResponse({'cart': username.get_cart()}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
         
@@ -142,14 +135,9 @@ def get_user_info(request):
         username = request.user
 
         if not username:
-            return JsonResponse({'error': 'Username est requis'}, status=400)
+            return JsonResponse({'error': 'Username is required'}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
-
-        return JsonResponse(user.get_info())
+        return JsonResponse(username.get_info(), status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -157,36 +145,25 @@ def get_user_info(request):
 @require_http_methods(["POST"])
 def create_order(request):
     try:
-        data = json.loads(request.body)
-        username = data.get('username')
+        username = request.user
 
         if not username:
-            return JsonResponse({'error': 'Username est requis'}, status=400)
+            return JsonResponse({'error': 'Username is required'}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
-
-        order = user.create_order()
-        return JsonResponse({'message': 'Commande créée avec succès', 'order': order})
+        order = username.create_order()
+        return JsonResponse({'message': 'Order created successfully', 'order': order}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 @require_http_methods(["GET"])
 def get_orders(request):
     try:
-        username = request.GET.get('username')
+        username = request.user
 
         if not username:
-            return JsonResponse({'error': 'Username est requis'}, status=400)
+            return JsonResponse({'error': 'Username is required'}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Utilisateur non trouvé'}, status=404)
-
-        return JsonResponse({'orders': user.get_orders()})
+        return JsonResponse({'orders': username.get_orders()}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -195,19 +172,17 @@ def get_orders(request):
 def mark_order_delivered(request):
     try:
         data = json.loads(request.body)
-        username = data.get('username')
+        username = request.user
         order_id = data.get('order_id')
 
-        if not all([username, order_id]):
-            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
-
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-
-        if user.update_order_status(order_id, 'delivered'):
-            return JsonResponse({'message': 'Order marked as delivered'})
+        if not username:
+            return JsonResponse({'error': 'Username is required'}, status=400)
+        
+        if not all([order_id]):
+            return JsonResponse({'error': 'Order ID are required'}, status=400)
+        
+        if username.update_order_status(order_id, 'delivered'):
+            return JsonResponse({'message': 'Order marked as delivered'}, status=200)
         else:
             return JsonResponse({'error': 'Order not found'}, status=404)
 
@@ -221,23 +196,36 @@ def mark_order_delivered(request):
 def cancel_order(request):
     try:
         data = json.loads(request.body)
-        username = data.get('username')
+        username = request.user
         order_id = data.get('order_id')
 
-        if not all([username, order_id]):
+        if not username:
+            return JsonResponse({'error': 'Username is required'}, status=400)
+        
+        if not all([order_id]):
             return JsonResponse({'error': 'Username and order ID are required'}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-
-        if user.update_order_status(order_id, 'canceled'):
-            return JsonResponse({'message': 'Order canceled'})
+        if username.update_order_status(order_id, 'canceled'):
+            return JsonResponse({'message': 'Order canceled'}, status=200)
         else:
             return JsonResponse({'error': 'Order not found'}, status=404)
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def delete_cart(request):
+    try:
+        data = json.loads(request.body)
+        username = request.user
+
+        if not username:
+            return JsonResponse({'error': 'Username is required'}, status=400)
+        
+        username.delete_cart()
+        return JsonResponse({'message': 'Cart emptied successfully'}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

@@ -17,6 +17,7 @@ function showPopupNotification(message: string) {
 }
 const productsInCard = inject('productsInCard');
 
+
 const product = ref({
   name: '',
   price: 0,
@@ -83,6 +84,16 @@ function closeModal() {
 
 
 function addToCart() {
+  fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
+    method: 'POST',
+    credentials: "include",
+    mode: 'cors',
+    body: JSON.stringify({
+      product: product.value.pk,
+      quantity: quantity.value
+    })  
+  }).then(response => response.json())
+  .then(_ => {
   console.log('Adding product to cart:', product.value);
 
   const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
@@ -102,10 +113,13 @@ function addToCart() {
     });
   }
 
+
   console.log('Updated products in cart:', productsInCard.value);
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 
   showPopupNotification('Produit ajouté au panier !');
+
+  });
 
 
 
@@ -155,13 +169,13 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
-  <LowerPage>
-    <transition name="fade">
-      <div v-if="showPopup" class="popup-notification">
-        {{ popupMessage }}
-      </div>
-    </transition>
-  </LowerPage>
+
+  <transition name="fade">
+    <div v-if="showPopup" class="popup-notification">
+      {{ popupMessage }}
+    </div>
+  </transition>
+
 </template>
 
 <style scoped>
