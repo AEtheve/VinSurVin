@@ -56,7 +56,7 @@ const fetchProduct = async () => {
     promo: productData.promo,
     image: productData.image,
     description: productData.description,
-    cepage: productData.cepage,
+    cepage: productData.grape_variety,
     region: productData.region,
     millesime: productData.millesime,
     appellation: productData.appellation,
