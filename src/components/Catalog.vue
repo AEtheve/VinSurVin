@@ -169,11 +169,11 @@ function openFilterMenu() {
     </div>
   </dialog>
 
-  <div style="padding-left: 3%;">
+  <div style="display:inline-flex; flex-direction: column; align-items: flex-end;">
     <button class="filter-button" @click="openFilterMenu">
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
     </button>
-    <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px;">
+    <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px; justify-content: center;">
       <ProductBox v-for="product in products" :key="product.pk" :product="product" />
     </div>
     <div class="pagination-controls" style="text-align: center; margin-top: 120px; z-index: 0">
@@ -206,12 +206,11 @@ function openFilterMenu() {
 .filter-button {
   cursor: pointer;
   background: #e9e9e9;
-  display: flex;
   border: none;
   color: black;
   padding: 15px;
   border-radius: 10px;
-  margin-left: 90%;
+  width: fit-content;
 }
 
 dialog {

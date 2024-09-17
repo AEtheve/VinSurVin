@@ -13,7 +13,7 @@ function showPopupNotification(message: string) {
 
   setTimeout(() => {
     showPopup.value = false;
-  }, 3000); 
+  }, 3000);
 }
 const productsInCard = inject('productsInCard');
 
@@ -86,7 +86,6 @@ function addToCart() {
   console.log('Adding product to cart:', product.value);
 
   const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
-  console.log('PK :', product.value.pk, 'Existing product index:', existingProductIndex );
 
   if (existingProductIndex !== -1) {
     console.log('Product already in cart, updating quantity');
@@ -148,7 +147,7 @@ function addToCart() {
           <button class="quantity_button" @click="increment">+</button>
         </div>
         <div class="add-to-cart-container">
-          <button class="cart_button" @click="addToCart" >Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
         </div>
       </div>
     </div>
@@ -157,12 +156,12 @@ function addToCart() {
     </div>
   </div>
   <LowerPage>
-  <transition name="fade">
-    <div v-if="showPopup" class="popup-notification">
-      {{ popupMessage }}
-    </div>
-  </transition>
-</LowerPage> 
+    <transition name="fade">
+      <div v-if="showPopup" class="popup-notification">
+        {{ popupMessage }}
+      </div>
+    </transition>
+  </LowerPage>
 </template>
 
 <style scoped>
@@ -186,7 +185,7 @@ function addToCart() {
 }
 
 .add-to-cart-container {
-  margin-top: 1rem; 
+  margin-top: 1rem;
 }
 
 .quantity_button {
@@ -220,6 +219,8 @@ function addToCart() {
 
 .product-content {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 2rem;
 }
 
@@ -313,7 +314,7 @@ function addToCart() {
   cursor: pointer;
   transition: all 0.3s ease;
   width: 60%;
-  
+
 }
 
 .feedback-message {
@@ -338,11 +339,13 @@ function addToCart() {
   transition: opacity 0.3s ease;
 }
 
-.popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
+.popup-notification.fade-enter-active,
+.popup-notification.fade-leave-active {
   transition: opacity 0.3s ease;
 }
 
-.popup-notification.fade-enter, .popup-notification.fade-leave-to {
+.popup-notification.fade-enter,
+.popup-notification.fade-leave-to {
   opacity: 0;
 }
 
@@ -352,6 +355,12 @@ button:hover {
   border: 2px solid black;
 }
 
-
-
+@media (max-width: 1091px) {
+  .product-content {
+    flex-direction: column;
+  }
+  .cart_button {
+    width: 100%;
+  }
+}
 </style>
