@@ -5,6 +5,8 @@ const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
 const isCartEmpty = computed(() => productsInCard.value.length === 0);
 const dialogMenuMobile = ref(false);
 const productlist = ref([]);
+const currentPage = ref(1);
+const totalPages = ref(1);
 
 
 provide('isCartEmpty', isCartEmpty);
@@ -12,7 +14,8 @@ provide('cartOpen', cartOpen);
 provide('productsInCard', productsInCard);
 provide('dialogMenuMobile', dialogMenuMobile);
 provide('productlist', productlist);
-
+provide('currentPage', currentPage);
+provide('totalPages', totalPages);
 
 
 function computeSubtotal() {

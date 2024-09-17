@@ -17,6 +17,8 @@ const isMobileMenuOpen = ref(false);
 const cartOpen = inject('cartOpen');
 const productsInCard = inject('productsInCard');
 const productlist = inject('productlist');
+const currentPage = inject("currentPage");
+const totalPages = inject("totalPages");
 
 const isSearchActive = ref(false);
 
@@ -29,7 +31,12 @@ async function handleEnterPress() {
     const response = await fetch(`http://localhost:8000/product/search/?name=${searchTerm}`);
     const data = await response.json();
 	productlist.value = data.products;
-	router.push('/boutique');
+	currentPage.value = data.current_page;
+	totalPages.value = data.total_pages;
+
+	if (router.currentRoute.value.path !== '/boutique') {
+		router.push('/boutique');
+	}
   } catch (error) {
     console.error('Erreur lors de la recherche:', error);
   }
