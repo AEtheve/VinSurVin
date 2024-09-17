@@ -5,6 +5,7 @@ import { defineProps, ref,inject, onMounted } from 'vue';
 
 const showPopup = ref(false);
 const popupMessage = ref('');
+const isError = ref(false);
 
 function showPopupNotification(message: string) {
   popupMessage.value = message;
@@ -14,6 +15,16 @@ function showPopupNotification(message: string) {
     showPopup.value = false;
   }, 3000); 
 }
+function showPopupError(message: string) {
+  popupMessage.value = message;
+  showPopup.value = true;
+  isError.value = true;
+
+  setTimeout(() => {
+    showPopup.value = false;
+  }, 5000); 
+}
+
 
 const props = defineProps<{
   product: {
@@ -67,28 +78,31 @@ function addToCart() {
     })  
   }).then(response => response.json())
   .then(_ => {
-
+    if (_.error === 'Insufficient stock') {
+      showPopupError('Stock insuffisant !');
+      return;
+    }
     console.log("quantity",quantity.value);
-console.log("id",props.product.pk);
-console.log("productsInCard",productsInCard.value);
-const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
+    console.log("id",props.product.pk);
+    console.log("productsInCard",productsInCard.value);
+    const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
 
-if (existingProductIndex !== -1) {
-  productsInCard.value[existingProductIndex].quantity += quantity.value;
-  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
-  showPopupNotification('Produit ajouté au panier !');
-}
-else {
-  productsInCard.value.push({
-    pk: props.product.pk,
-    name: props.product.name,
-    price: props.product.price,
-    promo: props.product.promo,
-    image: props.product.image,
-    description: props.product.description,
-    quantity: quantity.value
-  });
-}
+  if (existingProductIndex !== -1) {
+    productsInCard.value[existingProductIndex].quantity += quantity.value;
+    localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+    showPopupNotification('Produit ajouté au panier !');
+  }
+  else {
+    productsInCard.value.push({
+      pk: props.product.pk,
+      name: props.product.name,
+      price: props.product.price,
+      promo: props.product.promo,
+      image: props.product.image,
+      description: props.product.description,
+      quantity: quantity.value
+    });
+  }
 localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 showPopupNotification('Produit ajouté au panier !');
   });
@@ -138,8 +152,8 @@ provide('addToCart', addToCart);
     </div>
   </div>
   <transition name="fade">
-    <div v-if="showPopup" class="popup-notification">
-      {{ popupMessage }}
+    <div v-if="showPopup" class="popup-notification" :class="{ 'error-popup': isError }">
+      <p>{{ popupMessage }}</p>
     </div>
   </transition>
 </template>
@@ -151,13 +165,18 @@ provide('addToCart', addToCart);
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
+  background: rgba(0, 0, 0, 0.8); 
+  color: white; 
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   z-index: 1001;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.error-popup {
+  background: red; 
+  color: white;
 }
 
 .popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
@@ -167,7 +186,6 @@ provide('addToCart', addToCart);
 .popup-notification.fade-enter, .popup-notification.fade-leave-to {
   opacity: 0;
 }
-
 
 .quantity_input {
   border: 1px solid black;
