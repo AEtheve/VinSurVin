@@ -178,10 +178,11 @@ function openFilterMenu() {
     </div>
   </dialog>
 
-  <div style="display:inline-flex; flex-direction: column; align-items: flex-end;">
+  <div style="display:inline-flex; flex-direction: column; align-items: flex-start; margin: 10px;">
+    <div style="width: 100%; display: flex; justify-content: flex-end;">
     <button class="filter-button" @click="openFilterMenu">
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
-    </button>
+    </button></div>
     <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px; justify-content: center;">
       <ProductBox v-for="product in products" :key="product.pk" :product="product" />
     </div>
