@@ -28,7 +28,7 @@ async function handleEnterPress() {
   const filtre = document.getElementById("input-search");
   const searchTerm = filtre.value;
   try {
-    const response = await fetch(`http://localhost:8000/product/search/?name=${searchTerm}`);
+    const response = await fetch(`//${window.location.hostname}:8000//product/search/?name=${searchTerm}`);
     const data = await response.json();
 	productlist.value = data.products;
 	currentPage.value = data.current_page;
