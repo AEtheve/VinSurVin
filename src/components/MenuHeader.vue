@@ -19,27 +19,18 @@ const productsInCard = inject('productsInCard');
 const productlist = inject('productlist');
 const currentPage = inject("currentPage");
 const totalPages = inject("totalPages");
+const filterSearch = inject("filterSearch");
 
 const isSearchActive = ref(false);
 
 const isConnected = document.cookie.includes("csrftoken");
 
 async function handleEnterPress() {
-  const filtre = document.getElementById("input-search");
-  const searchTerm = filtre.value;
-  try {
-    const response = await fetch(`//${window.location.hostname}:8000//product/search/?name=${searchTerm}`);
-    const data = await response.json();
-	productlist.value = data.products;
-	currentPage.value = data.current_page;
-	totalPages.value = data.total_pages;
-
+	const filtre = document.getElementById("input-search");
+	filterSearch.value = filtre.value;
 	if (router.currentRoute.value.path !== '/boutique') {
 		router.push('/boutique');
 	}
-  } catch (error) {
-    console.error('Erreur lors de la recherche:', error);
-  }
 }
 
 

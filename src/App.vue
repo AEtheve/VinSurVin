@@ -7,6 +7,7 @@ const dialogMenuMobile = ref(false);
 const productlist = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
+const filterSearch = ref('');
 
 const showAgeCheckDialog = ref(localStorage.getItem('adultCheck') !== 'true');
 
@@ -28,6 +29,7 @@ provide('dialogMenuMobile', dialogMenuMobile);
 provide('productlist', productlist);
 provide('currentPage', currentPage);
 provide('totalPages', totalPages);
+provide('filterSearch', filterSearch);
 
 
 function computeSubtotal() {
