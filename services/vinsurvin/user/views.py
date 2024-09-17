@@ -134,6 +134,10 @@ def create_order(request):
         data = json.loads(request.body)
         street = data.get('street')
         city = data.get('city')
+        if not is_user_logged(request):
+            email = data.get('email')
+            if not email:
+                return JsonResponse({'error': 'Email is required'}, status=400)
 
         if not all([street, city]):
             return JsonResponse({'error': 'Address is required'}, status=400)
@@ -179,10 +183,7 @@ def cancel_order(request):
         user = check_user_login(request)
         data = json.loads(request.body)
         order_id = data.get('order_id')
-        if not is_user_logged(request):
-            email = data.get('email')
-            if not email:
-                return JsonResponse({'error': 'Email is required'}, status=400)
+        
         if not all([order_id]):
             return JsonResponse({'error': 'Order ID is required'}, status=400)
 
