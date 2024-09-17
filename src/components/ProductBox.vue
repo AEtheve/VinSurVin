@@ -33,7 +33,15 @@ const props = defineProps<{
 }>();
 
 
-
+type Product = {
+  pk: number;
+  name: string;
+  price: number;
+  promo: number;
+  image: string;
+  description: string;
+  quantity: number;
+};
 const productsInCard = inject('productsInCard') as Ref<Product[]>;
 
 const quantity = ref(1);
@@ -59,7 +67,18 @@ function addToCart() {
     })  
   }).then(response => response.json())
   .then(_ => {
-    
+
+    console.log("quantity",quantity.value);
+console.log("id",props.product.pk);
+console.log("productsInCard",productsInCard.value);
+const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
+
+if (existingProductIndex !== -1) {
+  productsInCard.value[existingProductIndex].quantity += quantity.value;
+  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+  showPopupNotification('Produit ajouté au panier !');
+}
+else {
   productsInCard.value.push({
     pk: props.product.pk,
     name: props.product.name,
@@ -69,10 +88,10 @@ function addToCart() {
     description: props.product.description,
     quantity: quantity.value
   });
-  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
-  showPopupNotification('Produit ajouté au panier !');
+}
+localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+showPopupNotification('Produit ajouté au panier !');
   });
-
 }
 
 provide('addToCart', addToCart);
@@ -82,30 +101,30 @@ provide('addToCart', addToCart);
 <template>
   <div>
     <div id="product-box">
-      <a :href="'/product/' + product.pk">
-        <div class="product_card" :style="{ backgroundImage: 'url(' + product.image + ')' }">
+      <a :href="'/product/' + props.product.pk">
+        <div class="product_card" :style="{ backgroundImage: 'url(' + props.product.image + ')' }">
           <div class="overlay">
             <div class="description">
-              <p v-if="product.type"><strong>Type:</strong> {{ product.type }}</p>
-              <p><strong>Appellation:</strong> {{ product.appellation ? product.appellation : 'Non spécifiée' }}</p>
-              <p><strong>Région:</strong> {{ product.region ? product.region : 'Non spécifiée' }}</p>
-              <p v-if="product.millesime"><strong>Millésime:</strong> {{ product.millesime }}</p>
-              <p><strong>Cépage:</strong> {{ product.grape_variety ? product.grape_variety : 'Non spécifié' }}</p>
+              <p v-if="props.product.type"><strong>Type:</strong> {{ props.product.type }}</p>
+              <p><strong>Appellation:</strong> {{ props.product.appellation ? props.product.appellation : 'Non spécifiée' }}</p>
+              <p><strong>Région:</strong> {{ props.product.region ? props.product.region : 'Non spécifiée' }}</p>
+              <p v-if="props.product.millesime"><strong>Millésime:</strong> {{ props.product.millesime }}</p>
+              <p><strong>Cépage:</strong> {{ props.product.grape_variety ? props.product.grape_variety : 'Non spécifié' }}</p>
             </div>
           </div>
         </div>
       </a>
       <div class="price-box">
-        <span style="font-weight: 600; font-size: 1.2rem;">{{ product.name }}</span>   
+        <span style="font-weight: 600; font-size: 1.2rem;">{{ props.product.name }}</span>   
         <div class="product-price">
           <div class="promo-details">
-            <div v-if="product.promo > 0">
-              <span class="promo">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
-              <span class="promo-pourcent">-{{ product.promo }}%</span>
-              <div class="promo-price">{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
+            <div v-if="props.product.promo > 0">
+              <span class="promo">{{ props.product.price.toFixed(2).replace('.', ',') }}€</span>
+              <span class="promo-pourcent">-{{ props.product.promo }}%</span>
+              <div class="promo-price">{{ (props.product.price * (1 - props.product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
             </div>
             <div v-else>
-              <span>{{ product.price.toFixed(2).replace('.', ',') }}€</span>
+              <span>{{ props.product.price.toFixed(2).replace('.', ',') }}€</span>
             </div>
           </div>
           <div class="quantity-product-button">
