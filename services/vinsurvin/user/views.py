@@ -145,12 +145,15 @@ def get_user_info(request):
 @require_http_methods(["POST"])
 def create_order(request):
     try:
-        username = request.user
+        data = json.loads(request.body)
+        user = request.user
+        street = data.get('street')
+        city = data.get('city')
 
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
+        if not all([street, city]):
+            return JsonResponse({'error': 'Address is required'}, status=400)
 
-        order = username.create_order()
+        order = user.create_order(street, city)
         return JsonResponse({'message': 'Order created successfully', 'order': order}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -219,12 +222,11 @@ def cancel_order(request):
 @require_http_methods(["POST"])
 def delete_cart(request):
     try:
-        username = request.user
-
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
+        user = request.user
         
-        username.delete_cart()
-        return JsonResponse({'message': 'Cart emptied successfully'}, status=200)
+        user.delete_cart()
+        return JsonResponse({'message': 'Cart emptied successfully and stock updated'}, status=200)
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'One or more products in the cart no longer exist'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

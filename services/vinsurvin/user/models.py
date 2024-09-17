@@ -5,10 +5,17 @@ from django.utils import timezone
 from django.db import transaction
 from product.models import Product
 
+
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    class Meta:
+        abstract = True
+
 class OrderLine(models.Model):
     product_id = models.IntegerField()
     quantity = models.IntegerField()
-
+    price = models.FloatField()
     class Meta:
         abstract = True
 
@@ -19,8 +26,10 @@ class Order(models.Model):
         model_container=OrderLine,
         default=list
     )
+    total_price = models.FloatField()
+    address = djongo_models.JSONField(default=None, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         abstract = True
 
@@ -53,7 +62,17 @@ class User(AbstractUser):
                 if cart_item:
                     cart_item['quantity'] += quantity
                 else:
-                    self.cart.append({'product_id': product_id, 'quantity': quantity})
+                    if product.promo is not None:
+                        discount = product.price * (product.promo / 100)
+                        discounted_price = product.price - discount
+                    else:
+                        discounted_price = product.price
+                    
+                    self.cart.append({
+                        'product_id': product_id,
+                        'quantity': quantity,
+                        'price': discounted_price
+                    })
                 self.save()
                 return True
             return False
@@ -88,16 +107,22 @@ class User(AbstractUser):
     def get_cart(self):
         return self.cart
 
-    def create_order(self, status='pending'):
+    def create_order(self, street, city, status='in progress'):
         new_order_number = self.last_order_id + 1
         order = {
             'order_id': new_order_number,
             'status': status,
             'order_lines': self.cart,
-            'created_at': timezone.now()
+            'created_at': timezone.now(),
+            'address': {
+                'street': street,
+                'city': city
+            }
         }
         if self.orders is None:
             self.orders = []
+        total_price = sum(item['price'] * item['quantity'] for item in self.cart)
+        order['total_price'] = total_price
         self.orders.append(order)
         self.cart = []
         self.save()
@@ -110,7 +135,7 @@ class User(AbstractUser):
                 self.save()
                 return True
         return False
-    
+        
 
     def get_orders(self):
         return self.orders
