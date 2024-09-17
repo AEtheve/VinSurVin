@@ -23,7 +23,7 @@ function showPopupError(message: string) {
 
   setTimeout(() => {
     showPopup.value = false;
-  }, 5000); 
+  }, 5000);
 }
 const productsInCard = inject('productsInCard');
 
@@ -36,6 +36,7 @@ const product = ref({
   description: '',
   cepage: '',
   region: '',
+  Stock: 0,
   millesime: 0,
   appellation: '',
   type: '',
@@ -61,6 +62,7 @@ const fetchProduct = async () => {
     millesime: productData.millesime,
     appellation: productData.appellation,
     type: productData.type,
+    stock: productData.stock,
     pk: id.pk
   };
 };
@@ -101,43 +103,46 @@ function addToCart() {
     body: JSON.stringify({
       product: product.value.pk,
       quantity: quantity.value
-    })  
+    })
   }).then(response => response.json())
-  .then(_ => {
-    if (_.error === 'Insufficient stock') {
-      showPopupError('Stock insuffisant !');
-      return;
-    }
-  console.log('Adding product to cart:', product.value);
+    .then(_ => {
+      if (_.error === 'Insufficient stock') {
+        showPopupError('Stock insuffisant !');
+        return;
+      }
 
-  const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
+      if (product.value.stock >= quantity.value) {
+        product.value.stock -= quantity.value;
+      }
 
-  if (existingProductIndex !== -1) {
-    console.log('Product already in cart, updating quantity');
-    productsInCard.value[existingProductIndex].quantity += quantity.value;
-  } else {
-    console.log('Product not in cart, adding new item');
-    productsInCard.value.push({
-      pk: product.value.pk,
-      name: product.value.name,
-      price: product.value.price,
-      promo: product.value.promo,
-      image: product.value.image,
-      quantity: quantity.value
+      console.log('Adding product to cart:', product.value);
+
+      const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
+
+      if (existingProductIndex !== -1) {
+        console.log('Product already in cart, updating quantity');
+        productsInCard.value[existingProductIndex].quantity += quantity.value;
+      } else {
+        console.log('Product not in cart, adding new item');
+        productsInCard.value.push({
+          pk: product.value.pk,
+          name: product.value.name,
+          price: product.value.price,
+          promo: product.value.promo,
+          image: product.value.image,
+          quantity: quantity.value
+        });
+      }
+
+
+      quantity.value = 1;
+      console.log('Updated products in cart:', productsInCard.value);
+      localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+
+      showPopupNotification('Produit ajouté au panier !');
     });
-  }
-
-
-  console.log('Updated products in cart:', productsInCard.value);
-  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
-
-  showPopupNotification('Produit ajouté au panier !');
-
-  });
-
-
-
 }
+
 
 
 
@@ -163,6 +168,7 @@ function addToCart() {
         <p class="product-millesime"><strong>Millésime:</strong> {{ product.millesime || 'Non spécifié' }}</p>
         <p class="product-appellation"><strong>Appellation:</strong> {{ product.appellation || 'Non spécifiée' }}</p>
         <p class="product-type"><strong>Type:</strong> {{ product.type || 'Non spécifié' }}</p>
+        <p class="product-stock"><strong>stock:</strong> {{ product.stock || 'Indisponible' }}</p>
         <p class="product-price">
           <span v-if="product.promo > 0" class="price-before">{{ product.price.toFixed(2).replace('.', ',') }} €</span>
           <span class="price-prom
@@ -174,9 +180,15 @@ function addToCart() {
           <input class="quantity_input" :value="quantity" readonly />
           <button class="quantity_button" @click="increment">+</button>
         </div>
+
+        <p v-if="quantity > product.stock" class="stock-warning">
+          Quantité supérieure au stock disponible !
+        </p>
+
         <div class="add-to-cart-container">
-          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart" :disabled="quantity > product.stock">Ajouter au panier</button>
         </div>
+
       </div>
     </div>
     <div v-if="showModal" class="modal" @click="closeModal">
@@ -188,7 +200,6 @@ function addToCart() {
       <p>{{ popupMessage }}</p>
     </div>
   </transition>
-
 </template>
 
 <style scoped>
@@ -355,8 +366,8 @@ function addToCart() {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.8); 
-  color: white; 
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -365,7 +376,7 @@ function addToCart() {
 }
 
 .error-popup {
-  background: red; 
+  background: red;
   color: white;
 }
 
@@ -389,8 +400,20 @@ button:hover {
   .product-content {
     flex-direction: column;
   }
+
   .cart_button {
     width: 100%;
   }
+}
+
+.stock-warning {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+} 
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

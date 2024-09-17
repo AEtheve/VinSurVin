@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { provide ,Ref} from 'vue';
-import { defineProps, ref,inject, onMounted } from 'vue';
+import { provide, Ref } from 'vue';
+import { defineProps, ref, inject } from 'vue';
 
 
 const showPopup = ref(false);
@@ -13,8 +13,9 @@ function showPopupNotification(message: string) {
 
   setTimeout(() => {
     showPopup.value = false;
-  }, 3000); 
+  }, 3000);
 }
+
 function showPopupError(message: string) {
   popupMessage.value = message;
   showPopup.value = true;
@@ -22,9 +23,8 @@ function showPopupError(message: string) {
 
   setTimeout(() => {
     showPopup.value = false;
-  }, 5000); 
+  }, 5000);
 }
-
 
 const props = defineProps<{
   product: {
@@ -33,16 +33,15 @@ const props = defineProps<{
     promo: number;
     image: string;
     description: string;
-
-    pk: number;  
+    pk: number;
     grape_variety?: string;
     region?: string;
     millesime?: number;
     appellation?: string;
     type?: string;
+    stock: number;
   };
 }>();
-
 
 type Product = {
   pk: number;
@@ -52,13 +51,16 @@ type Product = {
   image: string;
   description: string;
   quantity: number;
+  stock: number;
 };
 const productsInCard = inject('productsInCard') as Ref<Product[]>;
 
 const quantity = ref(1);
 
 function increment() {
+
   quantity.value++;
+
 }
 
 function decrement() {
@@ -68,49 +70,50 @@ function decrement() {
 }
 
 function addToCart() {
-    fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
+  fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
     method: 'POST',
     credentials: "include",
     mode: 'cors',
     body: JSON.stringify({
       product: props.product.pk,
       quantity: quantity.value
-    })  
+    })
   }).then(response => response.json())
-  .then(_ => {
-    if (_.error === 'Insufficient stock') {
-      showPopupError('Stock insuffisant !');
-      return;
-    }
-    console.log("quantity",quantity.value);
-    console.log("id",props.product.pk);
-    console.log("productsInCard",productsInCard.value);
-    const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
+    .then(_ => {
+      if (_.error === 'Insufficient stock') {
+        showPopupError('Stock insuffisant !');
+        return;
+      }
 
-  if (existingProductIndex !== -1) {
-    productsInCard.value[existingProductIndex].quantity += quantity.value;
-    localStorage.setItem('cart', JSON.stringify(productsInCard.value));
-    showPopupNotification('Produit ajouté au panier !');
-  }
-  else {
-    productsInCard.value.push({
-      pk: props.product.pk,
-      name: props.product.name,
-      price: props.product.price,
-      promo: props.product.promo,
-      image: props.product.image,
-      description: props.product.description,
-      quantity: quantity.value
+
+
+
+      const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
+
+      if (existingProductIndex !== -1) {
+        productsInCard.value[existingProductIndex].quantity += quantity.value;
+      } else {
+        productsInCard.value.push({
+          pk: props.product.pk,
+          name: props.product.name,
+          price: props.product.price,
+          promo: props.product.promo,
+          image: props.product.image,
+          description: props.product.description,
+          quantity: quantity.value
+        });
+      }
+      
+
+      localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+      showPopupNotification('Produit ajouté au panier !');
+      quantity.value = 1;
+      window.location.reload(); 
     });
-  }
-localStorage.setItem('cart', JSON.stringify(productsInCard.value));
-showPopupNotification('Produit ajouté au panier !');
-  });
 }
 
 provide('addToCart', addToCart);
 </script>
-
 
 <template>
   <div>
@@ -120,22 +123,26 @@ provide('addToCart', addToCart);
           <div class="overlay">
             <div class="description">
               <p v-if="props.product.type"><strong>Type:</strong> {{ props.product.type }}</p>
-              <p><strong>Appellation:</strong> {{ props.product.appellation ? props.product.appellation : 'Non spécifiée' }}</p>
+              <p><strong>Appellation:</strong> {{ props.product.appellation ? props.product.appellation : 'Non spécifiée'
+              }}</p>
               <p><strong>Région:</strong> {{ props.product.region ? props.product.region : 'Non spécifiée' }}</p>
               <p v-if="props.product.millesime"><strong>Millésime:</strong> {{ props.product.millesime }}</p>
-              <p><strong>Cépage:</strong> {{ props.product.grape_variety ? props.product.grape_variety : 'Non spécifié' }}</p>
+              <p><strong>Cépage:</strong> {{ props.product.grape_variety ? props.product.grape_variety : 'Non spécifié' }}                 
+              </p>
+              <p><strong>Stock:</strong> {{ props.product.Stock ? props.product.Stock : 'Stock épuisé' }}</p>
             </div>
           </div>
         </div>
       </a>
       <div class="price-box">
-        <span style="font-weight: 600; font-size: 1.2rem;">{{ props.product.name }}</span>   
+        <span style="font-weight: 600; font-size: 1.2rem;">{{ props.product.name }}</span>
         <div class="product-price">
           <div class="promo-details">
             <div v-if="props.product.promo > 0">
               <span class="promo">{{ props.product.price.toFixed(2).replace('.', ',') }}€</span>
               <span class="promo-pourcent">-{{ props.product.promo }}%</span>
-              <div class="promo-price">{{ (props.product.price * (1 - props.product.promo / 100)).toFixed(2).replace('.', ',') }}€</div>
+              <div class="promo-price">{{ (props.product.price * (1 - props.product.promo / 100)).toFixed(2).replace('.',
+                ',') }}€</div>
             </div>
             <div v-else>
               <span>{{ props.product.price.toFixed(2).replace('.', ',') }}€</span>
@@ -146,7 +153,10 @@ provide('addToCart', addToCart);
             <input class="quantity_input" :value="quantity" readonly />
             <button class="quantity_button" @click="increment">+</button>
           </div>
-          <button class="cart_button" @click="addToCart">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart" :disabled="quantity > props.product.Stock"
+            :class="{ 'disabled-button': quantity > props.product.Stock }">
+            {{ quantity > props.product.Stock ? 'Quantité insuffisante' : 'Ajouter au panier' }}
+          </button>
         </div>
       </div>
     </div>
@@ -160,13 +170,12 @@ provide('addToCart', addToCart);
 
 
 <style scoped>
-
 .popup-notification {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.8); 
-  color: white; 
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -175,15 +184,17 @@ provide('addToCart', addToCart);
 }
 
 .error-popup {
-  background: red; 
+  background: red;
   color: white;
 }
 
-.popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
+.popup-notification.fade-enter-active,
+.popup-notification.fade-leave-active {
   transition: opacity 0.3s ease;
 }
 
-.popup-notification.fade-enter, .popup-notification.fade-leave-to {
+.popup-notification.fade-enter,
+.popup-notification.fade-leave-to {
   opacity: 0;
 }
 
@@ -212,9 +223,10 @@ provide('addToCart', addToCart);
 }
 
 .promo-details {
-    min-height: 50px; 
-    margin-bottom: 10px;
+  min-height: 50px;
+  margin-bottom: 10px;
 }
+
 .overlay {
   position: absolute;
   top: 0;
@@ -232,6 +244,16 @@ provide('addToCart', addToCart);
 
 .product_card:hover .overlay {
   opacity: 1;
+}
+
+.cart_button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .description {
@@ -276,6 +298,8 @@ button:hover {
   color: black;
   border: 2px solid black;
 }
+
+
 
 #product-box {
   display: inline-flex;

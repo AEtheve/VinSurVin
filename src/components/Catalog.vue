@@ -27,6 +27,7 @@ interface Product {
   millesime: string;
   appellation: string;
   type: string;
+  stock: number;
 }
 
 const fetchProduct = async (page = 1) => {
@@ -54,6 +55,7 @@ const fetchProduct = async (page = 1) => {
       millesime: product.millesime,
       appellation: product.appellation,
       type: product.type,
+      Stock: product.stock,
     };
   });
 };
