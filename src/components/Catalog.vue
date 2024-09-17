@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, watch , computed} from 'vue';
+import { ref, onMounted, watch, computed, inject } from 'vue';
 import ProductBox from './ProductBox.vue';
 import LowerPage from './LowerPage.vue';
 
-const products = ref<Product[]>([]);
+const products = ref(inject('productlist'));
+
 const showFilterMenu = ref(false);
 const rangemin = ref(0);
 const rangemax = ref(1000);
-const minPrice = ref(0); 
+const minPrice = ref(0);
 const maxPrice = ref(10000000);
-const currentPage = ref(1);  
-const totalPages = ref(1);  
+const currentPage = inject("currentPage");
+const totalPages = inject("totalPages");
 
 function applyFilters() {
   console.log('Filtres appliqués:', minPrice.value, maxPrice.value);
@@ -30,13 +31,20 @@ interface Product {
 }
 
 const fetchProduct = async (page = 1) => {
-  const response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
-  const dataJSON = await response.json();
-  const data = dataJSON.products;
+  let data = [];
+  if (products.value.length != 0) {
+    data = products.value;
+  } else {
+    const response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
+    const dataJSON = await response.json();
+    data = dataJSON.products;
 
 
-  currentPage.value = dataJSON.current_page;
-  totalPages.value = dataJSON.total_pages;
+    currentPage.value = dataJSON.current_page;
+    totalPages.value = dataJSON.total_pages;
+
+    
+  }
 
 
   products.value = data.map((productData) => {
@@ -56,9 +64,11 @@ const fetchProduct = async (page = 1) => {
       type: product.type,
     };
   });
-};
+}
 
-onMounted(() => {
+fetchProduct();
+
+watch(products, () => {
   fetchProduct();
 });
 
@@ -104,12 +114,12 @@ function openFilterMenu() {
         <div>
           <label for="min-price">Prix Min</label>
           <input type="range" id="min-price" name="min-price" min="0" max="1000" step="100" v-model="minPrice">
-          <span class="price-display">{{ minPrice }}€</span> 
+          <span class="price-display">{{ minPrice }}€</span>
         </div>
         <div>
           <label for="max-price">Prix Max</label>
           <input type="range" id="max-price" name="max-price" min="0" max="1000" step="100" v-model="maxPrice">
-          <span class="price-display">{{ maxPrice }}€</span> 
+          <span class="price-display">{{ maxPrice }}€</span>
         </div>
 
         <div>
@@ -120,7 +130,7 @@ function openFilterMenu() {
             <option value="rosé">Rosé</option>
           </select>
         </div>
-        
+
         <div>
           <label for="region">Région</label>
           <select name="region" id="region">
@@ -140,7 +150,7 @@ function openFilterMenu() {
             <option value="chablis">Chablis</option>
           </select>
         </div>
-        
+
         <div>
           <label for="millesime">Millésime</label>
           <select name="millesime" id="millesime">
@@ -173,13 +183,13 @@ function openFilterMenu() {
     <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px; justify-content: center;">
       <ProductBox v-for="product in products" :key="product.pk" :product="product" />
     </div>
-    <div class="pagination-controls" style="text-align: center; margin-top: 120px; z-index: 0">
+    <div class="pagination-controls" style="text-align: center; margin-top: 120px; z-index: 0; width: 100%;">
       <button @click="changePage(-1)" :disabled="currentPage === 1">Précédent</button>
       <span>Page {{ currentPage }} / {{ totalPages }}</span>
       <button @click="changePage(1)" :disabled="currentPage === totalPages">Suivant</button>
     </div>
     <LowerPage />
-    
+
   </div>
 </template>
 
@@ -293,5 +303,4 @@ button:hover {
   color: #b0b0b0;
   cursor: not-allowed;
 }
-
 </style>
