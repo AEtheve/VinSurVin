@@ -12,10 +12,34 @@ const minPrice = ref(0);
 const maxPrice = ref(10000000);
 const currentPage = inject("currentPage");
 const totalPages = inject("totalPages");
+const type = ref('rouge');
+const region = ref('');
+const appellation = ref('');
+const millesime = ref('');
+const grape_variety = ref('');
 
-function applyFilters() {
-  console.log('Filtres appliqués:', minPrice.value, maxPrice.value);
+async function applyFilters() {
+  const filters = {
+    type: type.value,
+    region: region.value,
+    appellation: appellation.value,
+    millesime: millesime.value,
+    grape_variety: grape_variety.value,
+    min_price: minPrice.value,
+    max_price: maxPrice.value,
+  };
+  let response = `//${window.location.hostname}:8000/product/search/?`
+  for (const [key, value] of Object.entries(filters)) {
+    if (value) {
+      response += `${key}=${value}&`;
+    }
+  }
+  console.log(response);
+  const data = await fetch(response);
+  const result = await data.json();
+  products.value = result.products;  
 }
+
 
 interface Product {
   pk: number;
@@ -30,6 +54,7 @@ interface Product {
   type: string;
 }
 
+
 const fetchProduct = async (page = 1) => {
   let data = [];
   if (products.value.length != 0) {
@@ -38,12 +63,8 @@ const fetchProduct = async (page = 1) => {
     const response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
     const dataJSON = await response.json();
     data = dataJSON.products;
-
-
     currentPage.value = dataJSON.current_page;
     totalPages.value = dataJSON.total_pages;
-
-    
   }
 
 
@@ -71,6 +92,12 @@ fetchProduct();
 watch(products, () => {
   fetchProduct();
 });
+
+
+
+
+
+
 
 function changePage(increment: number) {
   const newPage = currentPage.value + increment;
@@ -124,8 +151,8 @@ function openFilterMenu() {
 
         <div>
           <label for="type">Type</label>
-          <select name="type" id="type">
-            <option value="rouge">Rouge</option>
+          <select name="type" id="type" v-model="type">
+            <option value="rouge" >Rouge</option>
             <option value="blanc">Blanc</option>
             <option value="rosé">Rosé</option>
           </select>
@@ -133,7 +160,7 @@ function openFilterMenu() {
 
         <div>
           <label for="region">Région</label>
-          <select name="region" id="region">
+          <select name="region" id="region" v-model="region">
             <option value="bordeaux">Bordeaux</option>
             <option value="bourgogne">Bourgogne</option>
             <option value="alsace">Alsace</option>
@@ -143,7 +170,7 @@ function openFilterMenu() {
 
         <div>
           <label for="appellation">Appellation</label>
-          <select name="appellation" id="appellation">
+          <select name="appellation" id="appellation" v-model="appellation">
             <option value="médoc">Médoc</option>
             <option value="saint-émilion">Saint-Émilion</option>
             <option value="pomerol">Pomerol</option>
@@ -153,7 +180,7 @@ function openFilterMenu() {
 
         <div>
           <label for="millesime">Millésime</label>
-          <select name="millesime" id="millesime">
+          <select name="millesime" id="millesime" v-model="millesime">
             <option value="2023">2023</option>
             <option value="2022">2022</option>
             <option value="2021">2021</option>
@@ -162,7 +189,7 @@ function openFilterMenu() {
         </div>
         <div>
           <label for="grape_variety">Cépage</label>
-          <select name="grape_variety" id="grape_variety">
+          <select name="grape_variety" id="grape_variety" v-model="grape_variety">
             <option value="cabernet-sauvignon">Cabernet Sauvignon</option>
             <option value="merlot">Merlot</option>
             <option value="syrah">Syrah</option>
