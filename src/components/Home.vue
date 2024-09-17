@@ -18,7 +18,7 @@ import Catalog from './Catalog.vue';
             Naviguez facilement parmi nos catégories et trouvez le vin parfait pour chaque occasion.
           </p>
           <router-link to="/boutique">
-            <button style="background: #5A5A5A; color: white; padding: 20px 20px; border: none; border-radius: 28px; cursor: pointer; font-size: 1.1rem; width: 200px; margin-top: 20px;">
+            <button id="explorer_button" class="explore-button">
               Explorer
             </button>
           </router-link>
@@ -40,6 +40,24 @@ import Catalog from './Catalog.vue';
   background: white;
   padding: 20px;
   height: 100%;
+}
+
+.explore-button {
+  background: #5A5A5A;
+  color: white;
+  padding: 20px 20px;
+  border: none;
+  border-radius: 28px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 200px;
+  margin-top: 20px;
+  transition: background 0.3s, transform 0.3s; 
+}
+
+.explore-button:hover {
+  background: #434343;
+  transform: scale(1.05); 
 }
 
 </style>

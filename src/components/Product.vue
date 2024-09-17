@@ -33,7 +33,7 @@ const product = ref({
 
 
 const fetchProduct = async () => {
-  const response = await fetch(`http://localhost:8000/product/${$routes.params.id}`);
+  const response = await fetch(`//${window.location.hostname}:8000/product/${$routes.params.id}`);
   const data = await response.json();
 
   const productData = data.fields;

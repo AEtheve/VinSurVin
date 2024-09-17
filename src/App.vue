@@ -23,14 +23,28 @@ function clearCart() {
   productsInCard.value = [];
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
   console.log('Cart cleared', productsInCard.value);
-  console.log('Is Cart Empty:', isCartEmpty.value); // Debug line
+  console.log('Is Cart Empty:', isCartEmpty.value);
 }
 
+function removeProductFromCart(id, quantity) {
+  const index = productsInCard.value.findIndex((product) => product.pk === id);
 
-function removeProductFromCart(id) {
-  const index = productsInCard.value.findIndex((product) => product.id === id);
-  productsInCard.value.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+  fetch(`//${window.location.hostname}:8000/remove-from-cart/`, {
+    method: 'POST',
+    credentials: 'include',
+    mode: 'cors',
+    body: JSON.stringify({
+      product: id,
+      quantity: quantity,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.message) {
+        productsInCard.value.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(productsInCard.value));
+      }
+    });
 }
 provide('removeProductFromCart', removeProductFromCart);
 </script>
@@ -67,14 +81,13 @@ provide('removeProductFromCart', removeProductFromCart);
               <div>{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</div>
             </div>
             <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;"
-              @click="removeProductFromCart(product.id)"
-            >Supprimer</div>
+              @click="removeProductFromCart(product.pk, product.quantity)">Supprimer</div>
           </div>
         </div>
       </div>
 
       <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
-      <router-link to="/cartprocess"><button id="validate-cart" >Valider mon panier</button></router-link>
+      <router-link to="/cartprocess"><button id="validate-cart">Valider mon panier</button></router-link>
       <button @click="clearCart" :disabled="isCartEmpty" class="clear-cart-button">
         Vider le panier
       </button>
@@ -104,7 +117,7 @@ provide('removeProductFromCart', removeProductFromCart);
   height: 100%;
   width: 20vw;
   text-align: center;
-  
+
   overflow-y: auto;
   max-height: 100vh;
 }
@@ -157,13 +170,13 @@ button:hover {
 }
 
 .clear-cart-button:hover {
-  background-color: rgb(233, 76, 76); 
+  background-color: rgb(233, 76, 76);
 }
 
 .clear-cart-button:disabled {
-  background-color: #ccc; 
-  color: #666; 
+  background-color: #ccc;
+  color: #666;
   cursor: not-allowed;
-  transform: none; 
+  transform: none;
 }
 </style>
