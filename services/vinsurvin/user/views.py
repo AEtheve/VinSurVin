@@ -219,7 +219,6 @@ def cancel_order(request):
 @require_http_methods(["POST"])
 def delete_cart(request):
     try:
-        data = json.loads(request.body)
         username = request.user
 
         if not username:
