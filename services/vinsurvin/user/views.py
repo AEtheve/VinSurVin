@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 import json
 from .models import User
 from product.models import Product
-
+from django.contrib.auth.models import AnonymousUser
+import uuid
 User = get_user_model()
 
 @csrf_exempt
@@ -67,6 +68,7 @@ def login(request):
 @require_http_methods(["POST"])
 def add_to_cart(request):
     try:
+        user = check_user_login(request)
         data = json.loads(request.body)
         product_id = data.get('product')
         quantity = int(data.get('quantity', 1))
@@ -74,11 +76,6 @@ def add_to_cart(request):
         if not product_id:
             return JsonResponse({'error': 'Product ID is required'}, status=400)
 
-        user = request.user
-
-        if not user:
-            return JsonResponse({'error': 'Username not found'}, status=400)
-        
         if user.add_to_cart(product_id, quantity):
             return JsonResponse({'message': 'Product added to cart successfully', 'cart': user.get_cart()}, status=200)
         else:
@@ -94,17 +91,13 @@ def add_to_cart(request):
 @require_http_methods(["POST"])
 def remove_from_cart(request):
     try:
+        user = check_user_login(request)
         data = json.loads(request.body)
         product_id = data.get('product')
         quantity = int(data.get('quantity', 1))
 
         if not all([quantity, product_id]):
             return JsonResponse({'error': 'Quantity and Product ID are required'}, status=400)
-
-        user = request.user
-
-        if not user:
-            return JsonResponse({'error': 'Username not found'}, status=400)
 
         if user.remove_from_cart(product_id, quantity):
             return JsonResponse({'message': 'Product removed from cart successfully', 'cart': user.cart}, status=200)
@@ -120,24 +113,16 @@ def remove_from_cart(request):
 @require_http_methods(["GET"])
 def get_cart(request):
     try:
-        username = request.user
-
-        if not username:
-            return JsonResponse({'error': 'Username not found'}, status=400)
-        
-        return JsonResponse({'cart': username.get_cart()}, status=200)
+        user = check_user_login(request)
+        return JsonResponse({'cart': user.get_cart()}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
         
 @require_http_methods(["GET"])
 def get_user_info(request):
     try:
-        username = request.user
-
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
-
-        return JsonResponse(username.get_info(), status=200)
+        user = check_user_login(request)
+        return JsonResponse(user.get_info(), status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -145,8 +130,8 @@ def get_user_info(request):
 @require_http_methods(["POST"])
 def create_order(request):
     try:
+        user = check_user_login(request)
         data = json.loads(request.body)
-        user = request.user
         street = data.get('street')
         city = data.get('city')
 
@@ -161,12 +146,8 @@ def create_order(request):
 @require_http_methods(["GET"])
 def get_orders(request):
     try:
-        username = request.user
-
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
-
-        return JsonResponse({'orders': username.get_orders()}, status=200)
+        user = check_user_login(request)
+        return JsonResponse({'orders': user.get_orders()}, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -174,17 +155,14 @@ def get_orders(request):
 @require_http_methods(["POST"])
 def mark_order_delivered(request):
     try:
+        user = check_user_login(request)
         data = json.loads(request.body)
-        username = request.user
         order_id = data.get('order_id')
-
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
         
         if not all([order_id]):
             return JsonResponse({'error': 'Order ID are required'}, status=400)
         
-        if username.update_order_status(order_id, 'delivered'):
+        if user.update_order_status(order_id, 'delivered'):
             return JsonResponse({'message': 'Order marked as delivered'}, status=200)
         else:
             return JsonResponse({'error': 'Order not found'}, status=404)
@@ -198,17 +176,17 @@ def mark_order_delivered(request):
 @require_http_methods(["POST"])
 def cancel_order(request):
     try:
+        user = check_user_login(request)
         data = json.loads(request.body)
-        username = request.user
         order_id = data.get('order_id')
-
-        if not username:
-            return JsonResponse({'error': 'Username is required'}, status=400)
-        
+        if not is_user_logged(request):
+            email = data.get('email')
+            if not email:
+                return JsonResponse({'error': 'Email is required'}, status=400)
         if not all([order_id]):
-            return JsonResponse({'error': 'Username and order ID are required'}, status=400)
+            return JsonResponse({'error': 'Order ID is required'}, status=400)
 
-        if username.update_order_status(order_id, 'canceled'):
+        if user.update_order_status(order_id, 'canceled'):
             return JsonResponse({'message': 'Order canceled'}, status=200)
         else:
             return JsonResponse({'error': 'Order not found'}, status=404)
@@ -222,11 +200,22 @@ def cancel_order(request):
 @require_http_methods(["POST"])
 def delete_cart(request):
     try:
-        user = request.user
+        user = check_user_login(request)
         
         user.delete_cart()
         return JsonResponse({'message': 'Cart emptied successfully and stock updated'}, status=200)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'One or more products in the cart no longer exist'}, status=404)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e)}, status=500)    
+
+def check_user_login(request):
+    if isinstance(request.user, AnonymousUser):
+        username = str(uuid.uuid4())
+        user = User.objects.create_user(username=username)
+        auth_login(request, user)
+        return user
+    return request.user
+
+def is_user_logged(request):
+    return not isinstance(request.user, AnonymousUser)
