@@ -24,8 +24,11 @@ function clearCart() {
   localStorage.setItem('cart', JSON.stringify(productsInCard.value));
   console.log('Cart cleared', productsInCard.value);
   console.log('Is Cart Empty:', isCartEmpty.value);
-
-  
+  fetch(`//${window.location.hostname}:8000/delete-cart/`, {
+    method: 'POST',
+    credentials: 'include',
+    mode: 'cors',
+  });
 }
 
 function removeProductFromCart(id, quantity) {

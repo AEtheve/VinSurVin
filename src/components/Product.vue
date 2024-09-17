@@ -6,6 +6,7 @@ const $routes = useRoute();
 
 const showPopup = ref(false);
 const popupMessage = ref('');
+const isError = ref(false);
 
 function showPopupNotification(message: string) {
   popupMessage.value = message;
@@ -14,6 +15,15 @@ function showPopupNotification(message: string) {
   setTimeout(() => {
     showPopup.value = false;
   }, 3000); 
+}
+function showPopupError(message: string) {
+  popupMessage.value = message;
+  showPopup.value = true;
+  isError.value = true;
+
+  setTimeout(() => {
+    showPopup.value = false;
+  }, 5000); 
 }
 const productsInCard = inject('productsInCard');
 
@@ -94,6 +104,10 @@ function addToCart() {
     })  
   }).then(response => response.json())
   .then(_ => {
+    if (_.error === 'Insufficient stock') {
+      showPopupError('Stock insuffisant !');
+      return;
+    }
   console.log('Adding product to cart:', product.value);
 
   const existingProductIndex = productsInCard.value.findIndex(item => item.pk === product.value.pk);
@@ -170,10 +184,9 @@ function addToCart() {
       <img class="modal-image" :src="product.image" :alt="product.name" />
     </div>
   </div>
-
   <transition name="fade">
-    <div v-if="showPopup" class="popup-notification">
-      {{ popupMessage }}
+    <div v-if="showPopup" class="popup-notification" :class="{ 'error-popup': isError }">
+      <p>{{ popupMessage }}</p>
     </div>
   </transition>
 
@@ -337,19 +350,22 @@ function addToCart() {
   animation: fadein 1s;
 }
 
-
-
 .popup-notification {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
+  background: rgba(0, 0, 0, 0.8); 
+  color: white; 
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   z-index: 1001;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.error-popup {
+  background: red; 
+  color: white;
 }
 
 .popup-notification.fade-enter-active, .popup-notification.fade-leave-active {
