@@ -11,6 +11,8 @@ interface ProductItem {
 	quantity: number;
 }
 
+const isMobileMenuOpen = ref(false);
+
 const cartOpen = inject('cartOpen');
 const productsInCard = inject('productsInCard');
 
@@ -40,7 +42,9 @@ const totalQuantity = computed(() => {
 });
 
 
-
+function toggleMobileMenu() {
+	isMobileMenuOpen.value = !isMobileMenuOpen.value;
+}
 </script>
 
 
@@ -52,10 +56,29 @@ const totalQuantity = computed(() => {
 				style="background-image: url('https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/logo.png'); width: 171px; height: 81px; background-size: cover; background-position: center; background-repeat: no-repeat; cursor: pointer; position: relative; left:0; margin-left: 15px; background-size: 110px;">
 			</div>
 		</router-link>
-
-
-		<span><i class="fa-solid fa-bars"></i></span>
+		<span @click="toggleMobileMenu" style="margin: 20px;"><i class="fa-solid fa-bars"></i></span>
 	</ul>
+	<dialog v-if="isMobileMenuOpen" class="mobile-menu-dialog">
+		<div class="mobile-menu-content">
+			<div class="close-menu" @click="toggleMobileMenu" id="closeMenuMobile">
+				<i class="fa-solid fa-times"></i>
+			</div>
+			<ul class="mobile-menu-list">
+				<li>
+					<router-link to="/" @click="toggleMobileMenu">Accueil</router-link>
+				</li>
+				<li>
+					<router-link to="/boutique" @click="toggleMobileMenu">Boutique</router-link>
+				</li>
+				<li>
+					<router-link to="/account" @click="toggleMobileMenu">Se connecter / S'inscrire</router-link>
+				</li>
+				<li @click="cartOpen = true; toggleMobileMenu()">
+					Panier ({{ totalQuantity }})
+				</li>
+			</ul>
+		</div>
+	</dialog>
 	<ul class="ul-header">
 		<router-link to="/">
 			<div
@@ -152,11 +175,11 @@ li {
 
 li:hover {
 	text-decoration: underline;
-	text-underline-offset: 0.5em; 
+	text-underline-offset: 0.5em;
 }
 
 .active {
-	text-decoration: underline;	
+	text-decoration: underline;
 	text-underline-offset: 0.5em;
 }
 
@@ -224,6 +247,42 @@ li:hover {
 	font-size: 2rem;
 }
 
+.mobile-menu-dialog {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+	display: flex;
+	justify-content: flex-end;
+	padding: 0;
+	z-index: 1001;
+}
+
+.mobile-menu-content {
+	background: white;
+	height: 100%;
+	width: 70%;
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.mobile-menu-list {
+	display: flex;
+	flex-direction: column;
+	font-size: 1.1rem;
+	margin: auto;
+	height: 100%;
+	margin-top: 20px;
+}
+
+#closeMenuMobile {
+	cursor: pointer;
+	margin: 20px;
+	text-align: right;
+}
+
 @media (max-width: 1091px) {
 	.ul-header {
 		display: none;
@@ -232,7 +291,6 @@ li:hover {
 	.ul-header-mobile {
 		display: flex;
 		justify-content: space-between;
-		width: 90%;
 		margin-bottom: 10px;
 	}
 }
