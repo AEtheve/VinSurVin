@@ -40,9 +40,7 @@ const totalQuantity = computed(() => {
 });
 
 
-function clearCart() {
-	productsInCard.value = [];
-}
+
 </script>
 
 
