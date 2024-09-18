@@ -8,6 +8,7 @@ import Account from './components/Account.vue'
 import CartProcess from './components/CartProcess.vue'
 import LegalMentions from './components/LegalMentions.vue'
 import SalesConditions from './components/SalesConditions.vue'
+import OrderConfirmation from './components/OrderConfirmation.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -75,6 +76,15 @@ const router = createRouter({
             {
                 default: MenuHeader,
                 SalesConditions
+            },
+        },
+        {
+            path: '/confirmation',
+            name : 'confirmation',
+            components:
+            {
+                default: MenuHeader,
+                OrderConfirmation
             },
         },
     ],

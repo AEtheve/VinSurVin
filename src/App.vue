@@ -99,6 +99,7 @@ provide('removeProductFromCart', removeProductFromCart);
   <router-view name="CartProcess" />
   <router-view name="LegalMentions" />
   <router-view name="SalesConditions" />
+  <router-view name="OrderConfirmation" />
 
   <div id="cart_box" v-if="cartOpen">
     <div id="cart_content">
