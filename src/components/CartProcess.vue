@@ -48,7 +48,7 @@ function validateCart() {
 
 function submitDeliveryForm() {
   if (isFormDeliveryValid()) {
-    errorMessage.value = ''; // Si le formulaire est valide, on vide le message d'erreur
+    errorMessage.value = ''; 
     step.value = 2;
   } else {
     errorMessage.value = 'Veuillez remplir tous les champs de livraison.';
