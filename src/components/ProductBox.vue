@@ -85,9 +85,6 @@ function addToCart() {
         return;
       }
 
-
-
-
       const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
 
       if (existingProductIndex !== -1) {
@@ -108,7 +105,7 @@ function addToCart() {
       localStorage.setItem('cart', JSON.stringify(productsInCard.value));
       showPopupNotification('Produit ajouté au panier !');
       quantity.value = 1;
-      window.location.reload(); 
+      // window.location.reload(); 
     });
 }
 
