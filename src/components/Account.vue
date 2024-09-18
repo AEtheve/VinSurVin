@@ -87,6 +87,11 @@ function getInfos() {
       };
     })
 }
+
+function logout() {
+  document.cookie = "csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  location.reload();
+}
 </script>
 
 <template>
@@ -148,6 +153,10 @@ function getInfos() {
           <span class="account-info-value">{{ accountInfo.lastLogin }}</span>
         </div>
       </div>
+      <div
+      style="display: flex; justify-content: center;">
+      <button @click="logout">Se déconnecter</button>
+    </div>
     </div>
 
     <LowerPage></LowerPage>
@@ -209,6 +218,7 @@ input[type=submit] {
   background: #f9f9f9;
   border-radius: 10px;
   padding: 30px;
+  padding-bottom: 0;
   max-width: 600px;
   margin: 0 auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -254,11 +264,31 @@ input[type=submit] {
   justify-content: center;
 }
 
+button {
+  padding: 15px;
+  margin: 20px;
+  background: black;
+  color: white;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: 1px solid white;
+
+}
+
+button:hover {
+  background: white;
+  color: black;
+  border: 1px solid black;
+}
+
+
 @media (max-width: 1091px) {
   .form-wrapper {
     flex-direction: column;
     align-items: center;
   }
+
   .divider {
     display: none;
   }
