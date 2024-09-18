@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { inject, ref, computed } from 'vue';
-
+import { inject, ref, computed, watch } from 'vue';
 import router from '../Router';
 
 const clearCart = inject('clearCart');
 
-const total = inject('computeSubtotal');
-const isDeliveryFormValid = inject('isFormDeliveryValid');
 const city = inject('city');
 const address = inject('address');
 const codepostale = inject('codepostale');
 const email = inject('email');
 
 const isConnected = inject('isConnected');
+const isPaymentFormValid = inject('isPaymentFormValid');
+const processPayment = inject('processPayment');
 
 const cardNumber = ref('');
 const expiryDate = ref('');
@@ -27,6 +26,10 @@ const generalErrorMessage = ref('');
 const successMessage = ref('');
 const showLoading = ref(false);
 
+
+watch(processPayment, () => {
+  createOrder();
+});
 
 function getCurrentYear() {
   return new Date().getFullYear() % 100;
@@ -84,6 +87,12 @@ const isFormValid = computed(() => {
   );
 });
 
+watch(isFormValid, (newValue) => {
+  if (newValue) {
+    isPaymentFormValid.value = true;
+  }
+});
+
 function formatCardNumber(event: Event) {
   const input = event.target as HTMLInputElement;
   let value = input.value.replace(/\D/g, '');
@@ -109,6 +118,8 @@ function createOrder() {
         city: city.value,
         zip_code: codepostale.value,
       }),
+    }).then(() => {
+      handleSubmit();
     });
   }
   else {
@@ -122,8 +133,11 @@ function createOrder() {
         zip_code: codepostale.value,
         email: email.value
       }),
+    }).then(() => {
+      handleSubmit();
     });
   }
+  
 }
 
 function formatExpiryDate(event: Event) {
@@ -140,18 +154,18 @@ function formatExpiryDate(event: Event) {
 
 
 const handleSubmit = () => {
-  generalErrorMessage.value = '';
-  successMessage.value = '';
+  // generalErrorMessage.value = '';
+  // successMessage.value = '';
 
-  validateCardNumber();
-  validateExpiryDate();
-  validateCVV();
-  validateName();
+  // validateCardNumber();
+  // validateExpiryDate();
+  // validateCVV();
+  // validateName();
 
-  if (!isFormValid.value) {
-    generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
-    return;
-  }
+  // if (!isFormValid.value) {
+  //   generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
+  //   return;
+  // }
 
   showLoading.value = true;
 
@@ -175,9 +189,9 @@ const handleSubmit = () => {
     <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
   </div>
   <div class="payment-container">
-    <h2 class="form-title">Paiement sécurisé</h2>
+    <h2 class="form-title">2. Paiement sécurisé</h2>
 
-    <form @submit.prevent="handleSubmit">
+    <form>
       <div class="form-group">
         <label class="form-label" for="cardNumber">Numéro de carte *:</label>
         <input type="text" id="cardNumber" v-model="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required
@@ -204,13 +218,6 @@ const handleSubmit = () => {
         <input type="text" id="name" v-model="name" placeholder="Nom du titulaire" required @blur="validateName" />
         <div v-if="nameError" class="error-message">{{ nameError }}</div>
       </div>
-
-      <button type="submit" :disabled="!isFormValid || total() === 0 || !isDeliveryFormValid()" @click="createOrder">
-        Payer {{ total ? total().toFixed(2).replace('.', ',') : '0,00' }} €
-      </button>
-
-      <div v-if="generalErrorMessage" class="error-message">{{ generalErrorMessage }}</div>
-      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </form>
   </div>
 </template>

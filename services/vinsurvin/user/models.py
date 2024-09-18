@@ -109,7 +109,7 @@ class User(AbstractUser):
     def get_cart(self):
         return self.cart
 
-    def create_order(self, street, city, zip_code, status='in progress'):
+    def create_order(self, street, city, zip_code, status='in progress', email=None):
         new_order_number = self.last_order_id + 1
         order = {
             'order_id': new_order_number,
@@ -122,6 +122,8 @@ class User(AbstractUser):
                 'zip_code': zip_code
             }
         }
+        if self.is_anonymous_user:
+            order['email'] = email
         if self.orders is None:
             self.orders = []
         total_price = sum(item['price'] * item['quantity'] for item in self.cart)
