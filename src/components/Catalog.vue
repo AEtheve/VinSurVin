@@ -52,21 +52,24 @@ interface Product {
   millesime: string;
   appellation: string;
   type: string;
+  stock: number;
 }
 
 
 const fetchProduct = async (page = 1) => {
   let data = [];
-  if (products.value.length != 0) {
-    data = products.value;
+  let response: Response;
+  if (filterSearch.value) {
+    response = await fetch(`//${window.location.hostname}:8000/product/search/?name=${filterSearch.value}&page=${page}`);
   } else {
-    const response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
-    const dataJSON = await response.json();
-    data = dataJSON.products;
-    currentPage.value = dataJSON.current_page;
-    totalPages.value = dataJSON.total_pages;
+    response = await fetch(`//${window.location.hostname}:8000/product/?page=${page}`);
   }
+  const dataJSON = await response.json();
+  data = dataJSON.products;
 
+
+  currentPage.value = dataJSON.current_page;
+  totalPages.value = dataJSON.total_pages;
 
   products.value = data.map((productData) => {
     const product = productData.fields;
@@ -83,13 +86,16 @@ const fetchProduct = async (page = 1) => {
       millesime: product.millesime,
       appellation: product.appellation,
       type: product.type,
+      Stock: product.stock,
     };
   });
 }
 
-fetchProduct();
+onMounted(() => {
+  fetchProduct();
+});
 
-watch(products, () => {
+watch(filterSearch, () => {
   fetchProduct();
 });
 
@@ -208,10 +214,11 @@ function openFilterMenu() {
     </div>
   </dialog>
 
-  <div style="display:inline-flex; flex-direction: column; align-items: flex-end;">
+  <div style="display:inline-flex; flex-direction: column; align-items: flex-start; margin: 10px; width: 95%;">
+    <div style="width: 100%; display: flex; justify-content: flex-end;">
     <button class="filter-button" @click="openFilterMenu">
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
-    </button>
+    </button></div>
     <div style="display: inline-flex; gap: 25px; flex-wrap: wrap; row-gap: 100px; justify-content: center;">
       <ProductBox v-for="product in products" :key="product.pk" :product="product" />
     </div>

@@ -91,11 +91,7 @@ function getInfos() {
 
 <template>
   <div>
-    <div v-if="!isConnected" style="background: rgb(55, 67, 50); height: 560px;
-    mask-image: linear-gradient(rgb(0 0 0 / 90%), rgb(0 0 0));
-    display: flex;
-    align-items: center;
-    justify-content: center;">
+    <div v-if="!isConnected" id="account-forms">
       <!-- Conteneur des deux formulaires et du diviseur -->
       <div id="form_account" class="form-wrapper">
         <form id="formLogin" method="POST">
@@ -125,7 +121,9 @@ function getInfos() {
       </div>
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"></video>
+        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted
+          style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"
+          playsinline></video>
       </div>
 
     </div>
@@ -245,5 +243,24 @@ input[type=submit] {
 .account-info-value {
   color: #333;
   text-align: right;
+}
+
+#account-forms {
+  background: rgb(55, 67, 50);
+  height: 560px;
+  mask-image: linear-gradient(rgb(0 0 0 / 90%), rgb(0 0 0));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1091px) {
+  .form-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  .divider {
+    display: none;
+  }
 }
 </style>
