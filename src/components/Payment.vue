@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue';
+import router from '../Router';
 
 const total = inject('computeSubtotal');
 const isDeliveryFormValid = inject('isFormDeliveryValid');
@@ -146,10 +147,13 @@ const handleSubmit = () => {
     generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
     return;
   }
-
   setTimeout(() => {
-    successMessage.value = 'Le paiement a été effectué avec succès.';
-  }, 2000);
+    successMessage.value = 'Paiement effectué avec succès !';
+  }, 1000);
+  router.push('/confirmation');
+  setTimeout(() => {
+    router.push('/')
+  }, 5000)
 };
 </script>
 
