@@ -170,7 +170,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
           <div style="font-size: 1.2rem;">Total</div>
           <div style="font-size: 1.2rem; font-weight: bold;">{{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
         </div>
-        <button v-if="step === 0" @click="validateCart">Valider mon panier</button>
+        <button v-if="step === 0" @click="validateCart" :disabled="productsInCard.length === 0">Valider mon panier</button>
       </div>
     </div>
   </div>
@@ -269,5 +269,12 @@ button {
   border-radius: 10px;
   font-size: 1.1rem;
   cursor: pointer;
+}
+
+/* disable button */
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
