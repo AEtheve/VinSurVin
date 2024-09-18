@@ -24,7 +24,10 @@ def create_user(request):
 
             if not all([username, email, password]):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
-            
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'error': 'Email already exists'}, status=400)
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'error': 'Username already exists'}, status=400)
             user = User.objects.create_user(username=username, email=email, password=password, is_anonymous_user=False)
 
             return JsonResponse({'message': 'User created successfully'}, status=201)
