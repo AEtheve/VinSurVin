@@ -49,13 +49,23 @@ def login(request):
             if not all([username, password]):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
             
+            if is_user_logged(request):
+                guest_user = request.user
+                guest_cart = guest_user.get_cart()
+                guest_user.delete()
+                was_anonymous = True
+            else:
+                was_anonymous = False
             user = authenticate(request, username=username, password=password)
             
             if user is not None:
                 auth_login(request, user)
+                if was_anonymous:
+                    user.cart = guest_cart
+                    user.save()
                 return JsonResponse({'message': 'Login successful', 'user': user.username}, status=200)
-
-            return JsonResponse({'error': 'Incorrect username or password'}, status=401)
+            else:
+                return JsonResponse({'error': 'Incorrect username or password'}, status=401)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
