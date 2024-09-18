@@ -28,7 +28,7 @@ async function applyFilters() {
     min_price: minPrice.value,
     max_price: maxPrice.value,
   };
-  let response = `//${window.location.hostname}:8000/product/search/?`
+  let response = `//${window.location.hostname}:8000/product/search/?`;
   for (const [key, value] of Object.entries(filters)) {
     if (value) {
       response += `${key}=${value}&`;
@@ -185,6 +185,11 @@ function openFilterMenu() {
             <option value="2022">2022</option>
             <option value="2021">2021</option>
             <option value="2020">2020</option>
+            <option value="2019">2019</option>
+            <option value="2018">2018</option>
+            <option value="2017">2017</option>
+            <option value="2016">2016</option>
+            <option value="2015">2015</option>
           </select>
         </div>
         <div>
