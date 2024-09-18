@@ -95,7 +95,6 @@ function formatCVV(event: Event) {
 }
 
 function createOrder(){
-  clearCart();
   if (isConnected.value == true) {
     fetch(`//${window.location.hostname}:8000/create-order/`, {
       method: 'POST',
@@ -120,6 +119,7 @@ function createOrder(){
         email: email.value
       }), 
     });
+    clearCart();
   }
 }
 
@@ -275,7 +275,7 @@ input {
 }
 
 button {
-  width: 100%;
+  width: 110%;
   padding: 10px;
   background-color: #4caf50;
   color: white;

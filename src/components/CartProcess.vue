@@ -5,7 +5,7 @@ import LowerPage from './LowerPage.vue';
 
 const errorMessage = ref('');
 
-const isConnected = document.cookie.includes("csrftoken");
+const isConnected = inject('isConnected');
 provide('isConnected', isConnected);
 
 function removeProductFromCart(id, quantity) {
@@ -140,7 +140,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
         </div>
         <div v-if="!isConnected" class="form-group">
           <label for="email" class="form-label">Email *:</label>
-          <input type="email" id="email" v-model="email" placeholder="Votre email" required class="form-input" @input="formatCodePostale" />
+          <input type="email" id="email" v-model="email" placeholder="Votre email" required class="form-input" />
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 10px;">*Champ obligatoire</div>
       </form>
@@ -196,6 +196,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: fit-content;
 }
 
 
