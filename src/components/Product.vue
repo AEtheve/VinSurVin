@@ -7,8 +7,10 @@ const $routes = useRoute();
 const showPopup = ref(false);
 const popupMessage = ref('');
 const isError = ref(false);
+const isProcessing = ref(false);
 
 function showPopupNotification(message: string) {
+
   popupMessage.value = message;
   showPopup.value = true;
 
@@ -96,6 +98,9 @@ function closeModal() {
 
 
 function addToCart() {
+  if (isProcessing.value) return;
+  isProcessing.value = true;
+
   fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
     method: 'POST',
     credentials: "include",
@@ -134,12 +139,16 @@ function addToCart() {
         });
       }
 
-
       quantity.value = 1;
       console.log('Updated products in cart:', productsInCard.value);
       localStorage.setItem('cart', JSON.stringify(productsInCard.value));
 
       showPopupNotification('Produit ajouté au panier !');
+    })
+    .finally(() => {
+      setTimeout(() => {
+        isProcessing.value = false;
+      }, 800);
     });
 }
 
@@ -186,8 +195,12 @@ function addToCart() {
         </p>
 
         <div class="add-to-cart-container">
-          <button class="cart_button" @click="addToCart" :disabled="quantity > product.stock">Ajouter au panier</button>
+          <button class="cart_button" @click="addToCart" :disabled="quantity > product.stock || isProcessing">
+            {{ isProcessing ? 'Veuillez patienter...' : 'Ajouter au panier' }}
+          </button>
         </div>
+
+
 
       </div>
     </div>
@@ -410,7 +423,7 @@ button:hover {
   color: red;
   font-size: 0.9rem;
   margin-top: 10px;
-} 
+}
 
 button:disabled {
   background-color: #ccc;
