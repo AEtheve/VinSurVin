@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from 'vue';
 import LowerPage from './LowerPage.vue';
+
 const registerFormMessage = ref("");
 const registerFormError = ref("");
 const loginFormMessage = ref("");
 const loginFormError = ref("");
+const isLoading = ref(false); 
 
 const isConnected = inject('isConnected');
 
@@ -53,9 +55,11 @@ onMounted(() => {
                     registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
                   } else {
                     localStorage.setItem('isConnected', 'true');
+                    isLoading.value = true; 
+
                     setTimeout(() => {
                       location.href = "/boutique";
-                     }, 1000);
+                    }, 1000); 
                   }
                 })
             
@@ -83,9 +87,11 @@ onMounted(() => {
           } else {
             localStorage.setItem('isConnected', 'true');
             loginFormMessage.value = "Vous êtes connecté";
+            isLoading.value = true; 
+
             setTimeout(() => {
               location.reload();
-            }, 1000);
+            }, 1000); 
           }
         })
     });
@@ -123,6 +129,10 @@ function logout() {
 
 <template>
   <div>
+    <div v-if="isLoading" class="loading-overlay">
+      <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
+    </div>
+    
     <div v-if="!isConnected" id="account-forms">
       <!-- Conteneur des deux formulaires et du diviseur -->
       <div id="form_account" class="form-wrapper">
@@ -137,7 +147,6 @@ function logout() {
           <p v-if="loginFormError != ''">{{ loginFormError }}</p>
         </form>
 
-        <!-- Ligne séparatrice -->
         <div class="divider"></div>
 
         <!-- Formulaire d'inscription -->
@@ -180,10 +189,9 @@ function logout() {
           <span class="account-info-value">{{ accountInfo.lastLogin }}</span>
         </div>
       </div>
-      <div
-      style="display: flex; justify-content: center;">
-      <button @click="logout">Se déconnecter</button>
-    </div>
+      <div style="display: flex; justify-content: center;">
+        <button @click="logout">Se déconnecter</button>
+      </div>
     </div>
 
     <LowerPage></LowerPage>
@@ -212,12 +220,39 @@ function logout() {
   max-width: 1000px;
 }
 
+form input[type="submit"] {
+  padding: 10px;
+  background: #2c2c2c;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #2c2c2c;
+  transition: background-color 0.3s, color 0.3s, border 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+form input[type="submit"]:hover {
+  background: white;
+  color: #2c2c2c;
+  border: 1px solid #2c2c2c;
+  transform: scale(1.05); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+form input[type="submit"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); 
+  border: 1px solid #2c2c2c;
+}
+
+
 form {
   display: flex;
   flex-direction: column;
   width: 45%;
   margin-left: 70px;
   margin-right: 70px;
+  border: 1x solid;
+
 }
 
 input {
@@ -300,7 +335,6 @@ button {
   font-size: 1.1rem;
   cursor: pointer;
   border: 1px solid white;
-
 }
 
 button:hover {
@@ -309,15 +343,21 @@ button:hover {
   border: 1px solid black;
 }
 
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
 
-@media (max-width: 1091px) {
-  .form-wrapper {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .divider {
-    display: none;
-  }
+.loading-spinner {
+  width: 100px;
+  height: 100px;
 }
 </style>

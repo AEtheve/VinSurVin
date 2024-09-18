@@ -24,6 +24,8 @@ const cvvError = ref('');
 const nameError = ref('');
 const generalErrorMessage = ref('');
 const successMessage = ref('');
+const showLoading = ref(false);
+
 
 watch(processPayment, () => {
   createOrder();
@@ -116,6 +118,8 @@ function createOrder() {
         city: city.value,
         zip_code: codepostale.value,
       }),
+    }).then(() => {
+      handleSubmit();
     });
   }
   else {
@@ -129,9 +133,11 @@ function createOrder() {
         zip_code: codepostale.value,
         email: email.value
       }),
+    }).then(() => {
+      handleSubmit();
     });
-    clearCart();
   }
+  
 }
 
 function formatExpiryDate(event: Event) {
@@ -148,30 +154,40 @@ function formatExpiryDate(event: Event) {
 
 
 const handleSubmit = () => {
-  generalErrorMessage.value = '';
-  successMessage.value = '';
+  // generalErrorMessage.value = '';
+  // successMessage.value = '';
 
-  validateCardNumber();
-  validateExpiryDate();
-  validateCVV();
-  validateName();
+  // validateCardNumber();
+  // validateExpiryDate();
+  // validateCVV();
+  // validateName();
 
-  if (!isFormValid.value) {
-    generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
-    return;
-  }
+  // if (!isFormValid.value) {
+  //   generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
+  //   return;
+  // }
+
+  showLoading.value = true;
+
   setTimeout(() => {
+    showLoading.value = false;
     successMessage.value = 'Paiement effectué avec succès !';
-  }, 1000);
-  router.push('/confirmation');
-  setTimeout(() => {
-    router.push('/')
-  }, 5000)
+    clearCart();
+
+    setTimeout(() => {
+      router.push('/confirmation');
+    }, 1000); 
+  }, 2000); 
 };
+
+
 </script>
 
 
 <template>
+  <div v-if="showLoading" class="loading-overlay">
+    <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
+  </div>
   <div class="payment-container">
     <h2 class="form-title">2. Paiement sécurisé</h2>
 
@@ -275,5 +291,33 @@ button:disabled {
 .success-message {
   color: green;
   margin-top: 10px;
+}
+
+.main-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* Fond semi-transparent pour assombrir */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  /* Assurer que le GIF est au-dessus de tout le reste */
+}
+
+.loading-spinner {
+  width: 100px;
+  height: 100px;
 }
 </style>
