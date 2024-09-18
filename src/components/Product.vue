@@ -368,15 +368,15 @@ function addToCart() {
   cursor: pointer;
   transition: all 0.3s ease;
   width: 60%;
-  display: flex; /* Flexbox layout */
-  align-items: center; /* Center items vertically */
-  justify-content: center; /* Center items horizontally */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
 }
 
 .loading-gif {
-  margin-left: 10px; /* Adds space between the text and gif */
-  width: 20px; /* Set a width for the gif */
-  height: 20px; /* Set a height for the gif */
+  margin-left: 10px; 
+  width: 20px; 
+  height: 20px; 
 }
 
 .feedback-message {
