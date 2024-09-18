@@ -8,6 +8,7 @@ const productlist = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const filterSearch = ref('');
+const filterFieldsActive = ref('');
 const isConnected = ref(localStorage.getItem('isConnected') === 'true');
 
 provide('isConnected', isConnected);
@@ -32,6 +33,7 @@ provide('productlist', productlist);
 provide('currentPage', currentPage);
 provide('totalPages', totalPages);
 provide('filterSearch', filterSearch);
+provide('filterFieldsActive', filterFieldsActive);
 
 function computeSubtotal() {
   let subtotal = 0;
