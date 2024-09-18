@@ -21,7 +21,6 @@ function refuseAdult() {
   alert('Vous devez être majeur pour accéder à ce site.');
 }
 
-
 provide('isCartEmpty', isCartEmpty);
 provide('cartOpen', cartOpen);
 provide('productsInCard', productsInCard);
@@ -30,7 +29,6 @@ provide('productlist', productlist);
 provide('currentPage', currentPage);
 provide('totalPages', totalPages);
 provide('filterSearch', filterSearch);
-
 
 function computeSubtotal() {
   let subtotal = 0;
@@ -50,10 +48,9 @@ function clearCart() {
     credentials: 'include',
     mode: 'cors',
   }).then(() => {
-    window.location.reload(); 
+    window.location.reload();
   });
 }
-
 
 function removeProductFromCart(id, quantity) {
   const index = productsInCard.value.findIndex((product) => product.pk === id);
@@ -75,12 +72,16 @@ function removeProductFromCart(id, quantity) {
       }
     });
 }
+
+function closeCart() {
+  cartOpen.value = false;
+}
+
 provide('removeProductFromCart', removeProductFromCart);
 </script>
 
 <template>
-
-<div v-if="showAgeCheckDialog" class="age-check-dialog">
+  <div v-if="showAgeCheckDialog" class="age-check-dialog">
     <div class="age-check-content">
       <h2>Êtes-vous majeur ?</h2>
       <p>Vous devez avoir 18 ans ou plus pour accéder à ce site.</p>
@@ -103,39 +104,41 @@ provide('removeProductFromCart', removeProductFromCart);
 
   <div id="cart_box" v-if="cartOpen">
     <div id="cart_content">
-      <div id="close_cart" @click="cartOpen = false"><svg data-v-2f9813ef="" width="16" height="16" viewBox="0 0 16 16"
-          fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div id="close_cart" @click="cartOpen = false">
+        <svg data-v-2f9813ef="" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path data-v-2f9813ef="" d="M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
             stroke-linejoin="round"></path>
           <path data-v-2f9813ef="" d="M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
             stroke-linejoin="round"></path>
-        </svg></div>
+        </svg>
+      </div>
       <div style="display: flex; flex-direction: column; gap: 30px; margin-bottom: 20px;">
         <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
-          <div data-v-0ec6eb9a="" class="product_card" style="
-          width: 60px;
-          height: 90px;" :style="{ backgroundImage: `url(${product.image})` }">
-          </div>
+          <div data-v-0ec6eb9a="" class="product_card" style="width: 60px; height: 90px;"
+            :style="{ backgroundImage: `url(${product.image})` }"></div>
           <div style="display: inline-flex; flex-direction: column; padding: 1px; gap: 8px;">
             <div style="font-weight: bold; font-size: 1.2rem;">{{ product.name }}</div>
             <div style="font-size: 1.2rem; display: inline-flex; gap: 60px;">
               <div>x{{ product.quantity }}</div>
               <div>{{ (product.price * (1 - product.promo / 100)).toFixed(2).replace('.', ',') }} €</div>
             </div>
-            <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor:pointer;"
+            <div style="font-size: 1.1rem; color: rgb(56 56 184); cursor: pointer;"
               @click="removeProductFromCart(product.pk, product.quantity)">Supprimer</div>
           </div>
         </div>
       </div>
 
       <div>Sous-total : {{ computeSubtotal().toFixed(2).replace('.', ',') }} €</div>
-      <router-link to="/cartprocess"><button id="validate-cart">Valider mon panier</button></router-link>
+      <router-link to="/cartprocess">
+        <button id="validate-cart" @click="closeCart">Valider mon panier</button>
+      </router-link>
       <button @click="clearCart" :disabled="isCartEmpty" class="clear-cart-button">
         Vider le panier
       </button>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 #cart_box {
@@ -204,7 +207,7 @@ button:hover {
 .clear-cart-button {
   width: -webkit-fill-available;
   padding: 15px;
-  background-color: rgb(252, 107, 107);
+  background-color: #696969;
   color: white;
   border: 1px solid black;
   border-radius: 5px;
@@ -214,7 +217,7 @@ button:hover {
 }
 
 .clear-cart-button:hover {
-  background-color: rgb(233, 76, 76);
+  background-color: rgb(233, 76);
 }
 
 .clear-cart-button:disabled {
@@ -250,6 +253,4 @@ button:hover {
   display: flex;
   gap: 10px;
   justify-content: center;
-}
-
-</style>
+}</style>

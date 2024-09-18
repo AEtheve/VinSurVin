@@ -177,7 +177,7 @@ function addToCart() {
         <p class="product-millesime"><strong>Millésime:</strong> {{ product.millesime || 'Non spécifié' }}</p>
         <p class="product-appellation"><strong>Appellation:</strong> {{ product.appellation || 'Non spécifiée' }}</p>
         <p class="product-type"><strong>Type:</strong> {{ product.type || 'Non spécifié' }}</p>
-        <p class="product-stock"><strong>stock:</strong> {{ product.stock || 'Indisponible' }}</p>
+        <p class="product-stock"><strong>Stock:</strong> {{ product.stock || 'Indisponible' }}</p>
         <p class="product-price">
           <span v-if="product.promo > 0" class="price-before">{{ product.price.toFixed(2).replace('.', ',') }} €</span>
           <span class="price-prom
@@ -196,7 +196,9 @@ function addToCart() {
 
         <div class="add-to-cart-container">
           <button class="cart_button" @click="addToCart" :disabled="quantity > product.stock || isProcessing">
-            {{ isProcessing ? 'Veuillez patienter...' : 'Ajouter au panier' }}
+            <span v-if="isProcessing">Veuillez patienter...</span>
+            <span v-else>Ajouter au panier</span>
+            <img v-if="isProcessing" src="/src/assets/gif.gif" alt="loading" class="loading-gif" />
           </button>
         </div>
 
@@ -277,7 +279,8 @@ function addToCart() {
 
 .product-image img {
   cursor: zoom-in;
-  height: 65vh;
+  height: auto;
+  max-height: 550px;
   object-fit: contain;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -365,7 +368,15 @@ function addToCart() {
   cursor: pointer;
   transition: all 0.3s ease;
   width: 60%;
+  display: flex; /* Flexbox layout */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+}
 
+.loading-gif {
+  margin-left: 10px; /* Adds space between the text and gif */
+  width: 20px; /* Set a width for the gif */
+  height: 20px; /* Set a height for the gif */
 }
 
 .feedback-message {
