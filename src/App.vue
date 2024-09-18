@@ -51,7 +51,7 @@ function clearCart() {
     credentials: 'include',
     mode: 'cors',
   }).then(() => {
-    window.location.reload();
+    // window.location.reload();
   });
 }
 

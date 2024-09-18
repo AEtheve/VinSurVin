@@ -271,7 +271,6 @@ button {
   cursor: pointer;
 }
 
-/* disable button */
 
 button:disabled {
   background-color: #ccc;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue';
+
 import router from '../Router';
 
 const clearCart = inject('clearCart');
@@ -24,9 +25,11 @@ const cvvError = ref('');
 const nameError = ref('');
 const generalErrorMessage = ref('');
 const successMessage = ref('');
+const showLoading = ref(false);
+
 
 function getCurrentYear() {
-  return new Date().getFullYear() % 100; 
+  return new Date().getFullYear() % 100;
 }
 
 function validateCardNumber() {
@@ -77,7 +80,7 @@ const isFormValid = computed(() => {
     cardNumber.value.replace(/\s+/g, '').length === 16 &&
     /^\d{2}\/\d{2}$/.test(expiryDate.value) &&
     cvv.value.length === 3 &&
-    name.value 
+    name.value
   );
 });
 
@@ -95,7 +98,7 @@ function formatCVV(event: Event) {
   cvv.value = input.value;
 }
 
-function createOrder(){
+function createOrder() {
   if (isConnected.value == true) {
     fetch(`//${window.location.hostname}:8000/create-order/`, {
       method: 'POST',
@@ -105,7 +108,7 @@ function createOrder(){
         street: address.value,
         city: city.value,
         zip_code: codepostale.value,
-      }), 
+      }),
     });
   }
   else {
@@ -118,21 +121,20 @@ function createOrder(){
         city: city.value,
         zip_code: codepostale.value,
         email: email.value
-      }), 
+      }),
     });
-    clearCart();
   }
 }
 
 function formatExpiryDate(event: Event) {
   const input = event.target as HTMLInputElement;
-  let value = input.value.replace(/[^\d]/g, ''); 
+  let value = input.value.replace(/[^\d]/g, '');
 
   if (value.length > 2) {
-    value = value.slice(0, 2) + '/' + value.slice(2, 4); 
+    value = value.slice(0, 2) + '/' + value.slice(2, 4);
   }
 
-  expiryDate.value = value; 
+  expiryDate.value = value;
   input.value = value;
 }
 
@@ -150,79 +152,56 @@ const handleSubmit = () => {
     generalErrorMessage.value = 'Tous les champs doivent être correctement remplis.';
     return;
   }
+
+  showLoading.value = true;
+
   setTimeout(() => {
+    showLoading.value = false;
     successMessage.value = 'Paiement effectué avec succès !';
-  }, 1000);
-  router.push('/confirmation');
-  setTimeout(() => {
-    router.push('/')
-  }, 5000)
+    clearCart();
+
+    setTimeout(() => {
+      router.push('/confirmation');
+    }, 1000); 
+  }, 2000); 
 };
+
+
 </script>
 
 
 <template>
+  <div v-if="showLoading" class="loading-overlay">
+    <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
+  </div>
   <div class="payment-container">
     <h2 class="form-title">Paiement sécurisé</h2>
 
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label class="form-label" for="cardNumber">Numéro de carte *:</label>
-        <input
-          type="text"
-          id="cardNumber"
-          v-model="cardNumber"
-          placeholder="1234 5678 9012 3456"
-          maxlength="19"
-          required
-          @input="formatCardNumber"
-          @blur="validateCardNumber"
-          inputmode="numeric"
-        />
+        <input type="text" id="cardNumber" v-model="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required
+          @input="formatCardNumber" @blur="validateCardNumber" inputmode="numeric" />
         <div v-if="cardNumberError" class="error-message">{{ cardNumberError }}</div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="expiryDate">Date d'expiration *:</label>
-        <input
-          type="text"
-          id="expiryDate"
-          v-model="expiryDate"
-          placeholder="MM/AA"
-          maxlength="5"
-          required
-          @input="formatExpiryDate"
-          @blur="validateExpiryDate"
-        />
+        <input type="text" id="expiryDate" v-model="expiryDate" placeholder="MM/AA" maxlength="5" required
+          @input="formatExpiryDate" @blur="validateExpiryDate" />
         <div v-if="expiryDateError" class="error-message">{{ expiryDateError }}</div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="cvv">CVV *:</label>
-        <input
-          type="text"
-          id="cvv"
-          v-model="cvv"
-          placeholder="123"
-          maxlength="3"
-          required
-          @input="formatCVV"
-          @blur="validateCVV"
-          inputmode="numeric"
-        />
+        <input type="text" id="cvv" v-model="cvv" placeholder="123" maxlength="3" required @input="formatCVV"
+          @blur="validateCVV" inputmode="numeric" />
         <div v-if="cvvError" class="error-message">{{ cvvError }}</div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="name">Nom sur la carte *:</label>
-        <input
-          type="text"
-          id="name"
-          v-model="name"
-          placeholder="Nom du titulaire"
-          required
-          @blur="validateName"
-        />
+        <input type="text" id="name" v-model="name" placeholder="Nom du titulaire" required @blur="validateName" />
         <div v-if="nameError" class="error-message">{{ nameError }}</div>
       </div>
 
@@ -305,5 +284,33 @@ button:disabled {
 .success-message {
   color: green;
   margin-top: 10px;
+}
+
+.main-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* Fond semi-transparent pour assombrir */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  /* Assurer que le GIF est au-dessus de tout le reste */
+}
+
+.loading-spinner {
+  width: 100px;
+  height: 100px;
 }
 </style>
