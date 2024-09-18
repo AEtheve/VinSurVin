@@ -6,6 +6,8 @@ import { defineProps, ref, inject } from 'vue';
 const showPopup = ref(false);
 const popupMessage = ref('');
 const isError = ref(false);
+const isProcessing = ref(false);
+
 
 function showPopupNotification(message: string) {
   popupMessage.value = message;
@@ -70,6 +72,9 @@ function decrement() {
 }
 
 function addToCart() {
+  if (isProcessing.value) return;
+  isProcessing.value = true;
+
   fetch(`//${window.location.hostname}:8000/add-to-cart/`, {
     method: 'POST',
     credentials: "include",
@@ -78,15 +83,13 @@ function addToCart() {
       product: props.product.pk,
       quantity: quantity.value
     })
-  }).then(response => response.json())
+  })
+    .then(response => response.json())
     .then(_ => {
       if (_.error === 'Insufficient stock') {
         showPopupError('Stock insuffisant !');
         return;
       }
-
-
-
 
       const existingProductIndex = productsInCard.value.findIndex((product) => product.pk === props.product.pk);
 
@@ -103,14 +106,18 @@ function addToCart() {
           quantity: quantity.value
         });
       }
-      
 
       localStorage.setItem('cart', JSON.stringify(productsInCard.value));
       showPopupNotification('Produit ajouté au panier !');
       quantity.value = 1;
-      window.location.reload(); 
+    })
+    .finally(() => {
+      setTimeout(() => {
+        isProcessing.value = false;
+      }, 800);
     });
 }
+
 
 provide('addToCart', addToCart);
 </script>
@@ -153,7 +160,7 @@ provide('addToCart', addToCart);
             <input class="quantity_input" :value="quantity" readonly />
             <button class="quantity_button" @click="increment">+</button>
           </div>
-          <button class="cart_button" @click="addToCart" :disabled="quantity > props.product.Stock"
+          <button class="cart_button" @click="addToCart" :disabled="quantity > props.product.Stock || isProcessing"
             :class="{ 'disabled-button': quantity > props.product.Stock }">
             {{ quantity > props.product.Stock ? 'Quantité insuffisante' : 'Ajouter au panier' }}
           </button>

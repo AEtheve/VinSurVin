@@ -191,6 +191,7 @@ button {
   font-size: 1.1rem;
   cursor: pointer;
   border: 1px solid white;
+  width: -webkit-fill-available;
 
 }
 
@@ -201,7 +202,8 @@ button:hover {
 }
 
 .clear-cart-button {
-  padding: 10px 20px;
+  width: -webkit-fill-available;
+  padding: 15px;
   background-color: rgb(252, 107, 107);
   color: white;
   border: 1px solid black;
