@@ -62,6 +62,17 @@ const city = ref('');
 const codepostale = ref('');
 const email = ref('');
 
+function formatCodePostale(event: Event) {
+  const input = event.target as HTMLInputElement;
+  let value = input.value.replace(/\D/g, '');
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+  input.value = value;
+  codepostale.value = value;
+}
+
+
 provide('address', address);
 provide('city', city);
 provide('codepostale', codepostale);
@@ -116,12 +127,20 @@ provide('submitDeliveryForm', submitDeliveryForm);
           <input type="text" id="city" v-model="city" placeholder="Votre ville" required class="form-input" />
         </div>
         <div class="form-group">
-          <label for="codepostale" class="form-label">Code Postale *:</label>
-          <input type="text" id="codepostale" v-model="codepostale" placeholder="Votre Code postale" required class="form-input" />
+          <label for="codepostale" class="form-label">Code Postal *:</label>
+          <input 
+            type="text" 
+            id="codepostale" 
+            v-model="codepostale" 
+            placeholder="Votre Code postal" 
+            required 
+            class="form-input" 
+            @input="formatCodePostale" 
+          />
         </div>
         <div v-if="!isConnected" class="form-group">
           <label for="email" class="form-label">Email *:</label>
-          <input type="email" id="email" v-model="email" placeholder="Votre email" required class="form-input" />
+          <input type="email" id="email" v-model="email" placeholder="Votre email" required class="form-input" @input="formatCodePostale" />
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 10px;">*Champ obligatoire</div>
       </form>

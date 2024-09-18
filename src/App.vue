@@ -54,6 +54,8 @@ function clearCart() {
   });
 }
 
+provide('clearCart', clearCart);
+
 
 function removeProductFromCart(id, quantity) {
   const index = productsInCard.value.findIndex((product) => product.pk === id);

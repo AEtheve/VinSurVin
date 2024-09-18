@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue';
 
+const clearCart = inject('clearCart');
+
 const total = inject('computeSubtotal');
 const isDeliveryFormValid = inject('isFormDeliveryValid');
 const city = inject('city');
@@ -93,6 +95,7 @@ function formatCVV(event: Event) {
 }
 
 function createOrder(){
+  clearCart();
   if (isConnected.value == true) {
     fetch(`//${window.location.hostname}:8000/create-order/`, {
       method: 'POST',
