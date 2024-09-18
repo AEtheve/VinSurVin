@@ -210,7 +210,7 @@ provide('addToCart', addToCart);
   position: relative;
   background-size: cover;
   background-position: center;
-  height: 360px;
+  height: 300px;
   width: 240px;
   margin: 0px;
   cursor: pointer;
@@ -325,7 +325,6 @@ button:hover {
   display: inline-flex;
   flex-direction: column;
   text-align: center;
-  height: 131px;
   margin-top: 15px;
   justify-content: space-around;
 }
