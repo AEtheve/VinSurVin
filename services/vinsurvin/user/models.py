@@ -9,6 +9,7 @@ from product.models import Product
 class Address(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
+    zip_code = models.CharField(max_length=255)
     class Meta:
         abstract = True
 
@@ -108,7 +109,7 @@ class User(AbstractUser):
     def get_cart(self):
         return self.cart
 
-    def create_order(self, street, city, status='in progress'):
+    def create_order(self, street, city, zip_code, status='in progress'):
         new_order_number = self.last_order_id + 1
         order = {
             'order_id': new_order_number,
@@ -117,7 +118,8 @@ class User(AbstractUser):
             'created_at': timezone.now(),
             'address': {
                 'street': street,
-                'city': city
+                'city': city,
+                'zip_code': zip_code
             }
         }
         if self.orders is None:
