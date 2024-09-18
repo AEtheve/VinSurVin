@@ -137,15 +137,16 @@ def create_order(request):
         data = json.loads(request.body)
         street = data.get('street')
         city = data.get('city')
+        zip_code = data.get('zip_code')
         if not is_user_logged(request):
             email = data.get('email')
             if not email:
                 return JsonResponse({'error': 'Email is required'}, status=400)
 
-        if not all([street, city]):
+        if not all([street, city, zip_code]):
             return JsonResponse({'error': 'Address is required'}, status=400)
 
-        order = user.create_order(street, city)
+        order = user.create_order(street, city, zip_code)
         return JsonResponse({'message': 'Order created successfully', 'order': order}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
