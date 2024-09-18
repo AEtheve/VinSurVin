@@ -41,6 +41,7 @@ class User(AbstractUser):
         default=list
     )
     last_order_id = models.PositiveIntegerField(default=0)
+    is_anonymous_user = models.BooleanField(default=False)
 
     @property
     def last_order_id(self):
