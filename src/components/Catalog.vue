@@ -6,14 +6,12 @@ import LowerPage from './LowerPage.vue';
 const products = ref(inject('productlist'));
 
 const showFilterMenu = ref(false);
-const rangemin = ref(0);
 const rangemax = ref(1000);
 const minPrice = ref(0);
 const maxPrice = ref(10000000);
 const currentPage = inject("currentPage");
 const totalPages = inject("totalPages");
 const filterSearch = inject("filterSearch");
-const filterFieldsActive = inject("filterFieldsActive");
 const type = ref('rouge');
 const region = ref('');
 const appellation = ref('');
@@ -53,19 +51,6 @@ function applyFilters() {
 
 
 
-interface Product {
-  pk: number;
-  name: string;
-  price: number;
-  promo: number;
-  image: string;
-  grape_variety: string;
-  region: string;
-  millesime: string;
-  appellation: string;
-  type: string;
-  stock: number;
-}
 
 const fetchProduct = async (page = 1) => {
   let data = [];

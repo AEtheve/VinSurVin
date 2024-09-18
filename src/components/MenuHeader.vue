@@ -2,23 +2,11 @@
 import { ref, computed, inject } from 'vue';
 import router from '../Router';
 
-interface ProductItem {
-	pk: number;
-	name: string;
-	price: number;
-	promo: number;
-	image: string;
-	description: string;
-	quantity: number;
-}
 
 const isMobileMenuOpen = ref(false);
 
 const cartOpen = inject('cartOpen');
 const productsInCard = inject('productsInCard');
-const productlist = inject('productlist');
-const currentPage = inject("currentPage");
-const totalPages = inject("totalPages");
 const filterSearch = inject("filterSearch");
 
 const isSearchActive = ref(false);
