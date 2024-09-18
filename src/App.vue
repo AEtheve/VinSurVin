@@ -8,6 +8,9 @@ const productlist = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const filterSearch = ref('');
+const isConnected = ref(localStorage.getItem('isConnected') === 'true');
+
+provide('isConnected', isConnected);
 
 const showAgeCheckDialog = ref(localStorage.getItem('adultCheck') !== 'true');
 
@@ -51,6 +54,8 @@ function clearCart() {
     window.location.reload();
   });
 }
+
+provide('clearCart', clearCart);
 
 function removeProductFromCart(id, quantity) {
   const index = productsInCard.value.findIndex((product) => product.pk === id);

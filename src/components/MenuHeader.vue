@@ -23,7 +23,7 @@ const filterSearch = inject("filterSearch");
 
 const isSearchActive = ref(false);
 
-const isConnected = document.cookie.includes("csrftoken");
+const isConnected = inject('isConnected');
 
 async function handleEnterPress() {
 	const filtre = document.getElementById("input-search");

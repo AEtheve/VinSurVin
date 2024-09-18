@@ -5,7 +5,7 @@ import LowerPage from './LowerPage.vue';
 
 const errorMessage = ref('');
 
-const isConnected = document.cookie.includes("csrftoken");
+const isConnected = inject('isConnected');
 provide('isConnected', isConnected);
 
 function removeProductFromCart(id, quantity) {
@@ -62,6 +62,17 @@ const city = ref('');
 const codepostale = ref('');
 const email = ref('');
 
+function formatCodePostale(event: Event) {
+  const input = event.target as HTMLInputElement;
+  let value = input.value.replace(/\D/g, '');
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+  input.value = value;
+  codepostale.value = value;
+}
+
+
 provide('address', address);
 provide('city', city);
 provide('codepostale', codepostale);
@@ -116,8 +127,16 @@ provide('submitDeliveryForm', submitDeliveryForm);
           <input type="text" id="city" v-model="city" placeholder="Votre ville" required class="form-input" />
         </div>
         <div class="form-group">
-          <label for="codepostale" class="form-label">Code Postale *:</label>
-          <input type="text" id="codepostale" v-model="codepostale" placeholder="Votre Code postale" required class="form-input" />
+          <label for="codepostale" class="form-label">Code Postal *:</label>
+          <input 
+            type="text" 
+            id="codepostale" 
+            v-model="codepostale" 
+            placeholder="Votre Code postal" 
+            required 
+            class="form-input" 
+            @input="formatCodePostale" 
+          />
         </div>
         <div v-if="!isConnected" class="form-group">
           <label for="email" class="form-label">Email *:</label>
@@ -177,6 +196,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: fit-content;
 }
 
 

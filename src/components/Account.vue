@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import LowerPage from './LowerPage.vue';
 const registerFormMessage = ref("");
 const registerFormError = ref("");
 const loginFormMessage = ref("");
 const loginFormError = ref("");
 
-const isConnected = document.cookie.includes("csrftoken");
+const isConnected = inject('isConnected');
 
 const accountInfo = ref({});
 
 onMounted(() => {
-  if (isConnected) {
+  if (isConnected.value) {
     getInfos();
   } else {
     document.getElementById("formRegister").addEventListener("submit", function (event) {
@@ -38,9 +38,27 @@ onMounted(() => {
           }
           else {
             registerFormMessage.value = "Votre compte a bien été créé";
-            setTimeout(() => {
-              location.reload();
-            }, 1000);
+            fetch(`//${window.location.hostname}:8000/user/login`, {
+                method: "POST",
+                credentials: "include",
+                mode: 'cors',
+                body: JSON.stringify({
+                  username: event.target.email.value,
+                  password: event.target.password.value
+                })
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.error) {
+                    registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
+                  } else {
+                    localStorage.setItem('isConnected', 'true');
+                    setTimeout(() => {
+                      location.href = "/boutique";
+                     }, 1000);
+                  }
+                })
+            
           }
         })
     });
@@ -63,6 +81,7 @@ onMounted(() => {
           if (data.error) {
             registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
           } else {
+            localStorage.setItem('isConnected', 'true');
             loginFormMessage.value = "Vous êtes connecté";
             setTimeout(() => {
               location.reload();
@@ -97,6 +116,7 @@ function getInfos() {
 
 function logout() {
   document.cookie = "csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  localStorage.removeItem('isConnected');
   location.reload();
 }
 </script>

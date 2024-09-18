@@ -2,6 +2,8 @@
 import { inject, ref, computed } from 'vue';
 import router from '../Router';
 
+const clearCart = inject('clearCart');
+
 const total = inject('computeSubtotal');
 const isDeliveryFormValid = inject('isFormDeliveryValid');
 const city = inject('city');
@@ -118,6 +120,7 @@ function createOrder(){
         email: email.value
       }), 
     });
+    clearCart();
   }
 }
 
@@ -276,7 +279,7 @@ input {
 }
 
 button {
-  width: 100%;
+  width: 110%;
   padding: 10px;
   background-color: #4caf50;
   color: white;
