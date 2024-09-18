@@ -148,5 +148,6 @@ class User(AbstractUser):
             'username': self.username,
             'email': self.email,
             'createdAt': self.date_joined,
-            'lastLogin': self.last_login
+            'lastLogin': self.last_login,
+            'is_anonymous_user': self.is_anonymous_user
         }
