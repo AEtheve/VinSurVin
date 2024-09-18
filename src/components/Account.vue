@@ -30,10 +30,17 @@ onMounted(() => {
       })
         .then(response => response.json())
         .then(data => {
-          if (data.error) {
-            registerFormError.value = data.error;
-          } else {
-            registerFormMessage.value = data.message;
+          if (data.error == "Email already exists") {
+            registerFormError.value = "Un compte existe déjà avec cette adresse email";
+          } 
+          if (data.error == "Username already exists") {
+            registerFormError.value = "Un compte existe déjà avec ce nom d'utilisateur";
+          }
+          else {
+            registerFormMessage.value = "Votre compte a bien été créé";
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
           }
         })
     });
@@ -54,9 +61,9 @@ onMounted(() => {
         .then(response => response.json())
         .then(data => {
           if (data.error) {
-            loginFormError.value = data.error;
+            registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
           } else {
-            loginFormMessage.value = data.message;
+            loginFormMessage.value = "Vous êtes connecté";
             setTimeout(() => {
               location.reload();
             }, 1000);

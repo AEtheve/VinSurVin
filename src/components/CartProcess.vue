@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, inject, provide } from 'vue';
-import { onMounted } from 'vue';
 import Payment from './Payment.vue';
 import LowerPage from './LowerPage.vue';
+
+const errorMessage = ref('');
+
+const isConnected = document.cookie.includes("csrftoken");
+provide('isConnected', isConnected);
 
 function removeProductFromCart(id, quantity) {
   const index = productsInCard.value.findIndex((product) => product.pk === id);
@@ -43,17 +47,28 @@ function validateCart() {
 }
 
 function submitDeliveryForm() {
-  step.value = 2;
+  if (isFormDeliveryValid()) {
+    errorMessage.value = ''; // Si le formulaire est valide, on vide le message d'erreur
+    step.value = 2;
+  } else {
+    errorMessage.value = 'Veuillez remplir tous les champs de livraison.';
+  }
 }
+
+
 const nom = ref('');
 const address = ref('');
 const city = ref('');
+const codepostale = ref('');
+const email = ref('');
+
+provide('address', address);
+provide('city', city);
+provide('codepostale', codepostale);
+provide('email', email);
+
 function isFormDeliveryValid() {
-  return (
-    nom.value &&
-    address.value &&
-    city.value
-  );
+  return nom.value.trim() !== '' && address.value.trim() !== '' && city.value.trim() !== '';
 }
 
 provide('isFormDeliveryValid', isFormDeliveryValid);
@@ -64,7 +79,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
   <div style="padding-left: 3%; display: flex; gap: 0px; height: 80vh; justify-content: space-evenly">
     <!-- Step 0: Résumé de la commande -->
     <div v-if="step === 0" style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
-      <h2>Panier</h2>
+      <h2 class="form-title">Panier</h2>
       <div style="display: inline-flex; flex-direction: column; gap: 20px; overflow-y: auto; max-height: 60vh; padding-right: 10px; width: 98%;">
         <div v-for="product in productsInCard" :key="product.id" style="display: inline-flex; gap: 21px;">
           <div data-v-0ec6eb9a="" class="product_card" style="width: 120px; height: 180px;" :style="{ backgroundImage: `url(${product.image})` }">
@@ -85,19 +100,30 @@ provide('submitDeliveryForm', submitDeliveryForm);
  <div v-if="step === 1" class="form-container">
     <div class="delivery-form">
       <h2 class="form-title">Formulaire de Livraison</h2>
+      <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+
       <form @submit.prevent="submitDeliveryForm">
         <div class="form-group">
-          <label for="name" class="form-label">Nom :</label>
+          <label for="name" class="form-label">Nom *:</label>
           <input type="text" id="name" v-model="nom" placeholder="Votre nom" required class="form-input" />
         </div>
         <div class="form-group">
-          <label for="address" class="form-label">Adresse :</label>
+          <label for="address" class="form-label">Adresse *:</label>
           <input type="text" id="address" v-model="address" placeholder="Votre adresse" required class="form-input" />
         </div>
         <div class="form-group">
-          <label for="city" class="form-label">Ville :</label>
+          <label for="city" class="form-label">Ville *:</label>
           <input type="text" id="city" v-model="city" placeholder="Votre ville" required class="form-input" />
         </div>
+        <div class="form-group">
+          <label for="codepostale" class="form-label">Code Postale *:</label>
+          <input type="text" id="codepostale" v-model="codepostale" placeholder="Votre Code postale" required class="form-input" />
+        </div>
+        <div v-if="!isConnected" class="form-group">
+          <label for="email" class="form-label">Email *:</label>
+          <input type="email" id="email" v-model="email" placeholder="Votre email" required class="form-input" />
+        </div>
+        <div style="font-size: 0.8rem; color: #666; margin-top: 10px;">*Champ obligatoire</div>
       </form>
     </div>
       <Payment></Payment>
@@ -111,7 +137,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
 
 
     <div style="flex: 0.3 1 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
-      <h2>Récapitulatif :</h2>
+      <h2 class="form-title">Récapitulatif :</h2>
       <div style="display: flex; flex-direction: column; gap: 30px; margin-bottom: 20px; padding: 0 20px;">
         <div style="display: inline-flex; gap: 21px; justify-content: space-between;">
           <div style="font-size: 1.2rem;">Sous-total</div>
@@ -135,18 +161,6 @@ provide('submitDeliveryForm', submitDeliveryForm);
 
 <style scoped>
 
-.delivery-form {
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 60px;
-  padding-top: 1;
-  flex: 1;
-  width: 35%;
-  height: 80%;
-  margin: 0 auto;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
 
 .form-container {
   display: flex;
@@ -159,19 +173,12 @@ provide('submitDeliveryForm', submitDeliveryForm);
 
 .delivery-form, .payment-form {
   flex: 1; 
-  padding: 60px;
+  padding: 0 50px;
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
-}
 
 .form-group {
   margin-bottom: 20px;
