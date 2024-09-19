@@ -49,7 +49,7 @@ def login(request):
             if not all([username, password]):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
             
-            if is_user_logged(request):
+            if is_anonymous_user(request):
                 guest_user = request.user
                 guest_cart = guest_user.get_cart()
                 guest_user.delete()
@@ -233,5 +233,5 @@ def check_user_login(request):
         return user
     return request.user
 
-def is_user_logged(request):
-    return not isinstance(request.user, AnonymousUser)
+def is_anonymous_user(request):
+    return isinstance(request.user, AnonymousUser)
