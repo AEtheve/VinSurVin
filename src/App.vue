@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, provide, computed } from 'vue';
 const cartOpen = ref(false);
-const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
+const productsInCard = ref(JSON.parse(localStorage.getItem('cart') || '') || []);
 const isCartEmpty = computed(() => productsInCard.value.length === 0);
 const dialogMenuMobile = ref(false);
 const productlist = ref([]);
@@ -35,9 +35,18 @@ provide('totalPages', totalPages);
 provide('filterSearch', filterSearch);
 provide('filterFieldsActive', filterFieldsActive);
 
+interface Product {
+  pk: number;
+  name: string;
+  price: number;
+  promo: number;
+  quantity: number;
+  image: string;
+}
+
 function computeSubtotal() {
   let subtotal = 0;
-  productsInCard.value.forEach((product) => {
+  productsInCard.value.forEach((product: Product) => {
     subtotal += (product.price * (1 - product.promo / 100)) * product.quantity;
   });
   return subtotal;
@@ -59,8 +68,8 @@ function clearCart() {
 
 provide('clearCart', clearCart);
 
-function removeProductFromCart(id, quantity) {
-  const index = productsInCard.value.findIndex((product) => product.pk === id);
+function removeProductFromCart(id: number, quantity: number) {
+  const index = productsInCard.value.findIndex((product: Product) => product.pk === id);
 
   fetch(`//${window.location.hostname}:8000/remove-from-cart/`, {
     method: 'POST',
@@ -260,4 +269,5 @@ button:hover {
   display: flex;
   gap: 10px;
   justify-content: center;
-}</style>
+}
+</style>

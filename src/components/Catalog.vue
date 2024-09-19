@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, inject } from 'vue';
+import { ref, onMounted, watch, inject } from 'vue';
 import ProductBox from './ProductBox.vue';
 import LowerPage from './LowerPage.vue';
 
@@ -217,7 +217,7 @@ function openFilterMenu() {
   </dialog>
 
   <div style="display:inline-flex; flex-direction: column; align-items: flex-start; margin: 10px; width: 95%;">
-    <div style="width: 100%; display: flex; justify-content: flex-end;">
+    <div style="width: 95%; display: flex; justify-content: flex-end; position: sticky; z-index: 1001; top: 12%;">
     <button class="filter-button" @click="openFilterMenu">
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
     </button></div>
