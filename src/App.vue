@@ -170,6 +170,8 @@ provide('removeProductFromCart', removeProductFromCart);
 }
 
 #cart_content {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   right: 0;
