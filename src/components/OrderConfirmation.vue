@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import LowerPage from './LowerPage.vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-</script>
-
 <template>
     <div class="page-container">
         <div class="back-arrow">
@@ -26,7 +19,7 @@ const router = useRouter();
 <style scoped>
 .page-container {
     position: relative;
-    min-height: 100vh; 
+    min-height: 100vh;
 }
 
 .back-arrow {
@@ -50,7 +43,7 @@ const router = useRouter();
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 300px); 
+    height: calc(100vh - 300px);
     margin-top: 0;
 }
 

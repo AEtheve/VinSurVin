@@ -51,7 +51,7 @@ function toggleMobileMenu() {
 
 
 <template>
-	<div id="promo-border">Profitez de réductions exceptionnelles sur nos vins!</div>
+	<!-- <div id="promo-border">Profitez de réductions exceptionnelles sur nos vins!</div> -->
 	<ul class="ul-header-mobile">
 		<router-link to="/">
 			<div
