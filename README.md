@@ -1,14 +1,28 @@
-# Vue 3 + TypeScript + Vite
+# Démarrage rapide avec Docker
+## Prérequis
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+## Installation
+1. Cloner le dépôt
+```bash
+git clone https://github.com/AEtheve/VinSurVin.git
+```
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+2. Se déplacer dans le dossier du projet
+```bash
+cd VinSurVin
+```
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+3. Créer un fichier `.env` à la racine du projet
+```bash
+touch .env
+```
 
-PROJECT E-COM FROM M2 GI 2024/2025
+4. Copier et modifier le contenu du fichier `.env.example` dans le fichier `.env`
+```bash
 
-- ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/AEtheve/VinSurVin) ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/AEtheve/VinSurVin)
+5. Exécuter les conteneurs Docker
+```bash
+docker-compose up
+```
 
-- ![GitHub top language](https://img.shields.io/github/languages/top/AEtheve/VinSurVin)
-- ![GitHub contributors](https://img.shields.io/github/contributors/AEtheve/VinSurVin)
-
-- ![GitHub License](https://img.shields.io/github/license/AEtheve/VinSurVin)

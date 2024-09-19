@@ -218,7 +218,7 @@ function openFilterMenu() {
   </dialog>
 
   <div style="display:inline-flex; flex-direction: column; align-items: flex-start; margin: 10px; width: 95%;">
-    <div style="width: 95%; display: flex; justify-content: flex-end; position: sticky; z-index: 1001; top: 12%;">
+    <div style="width: 95%; display: flex; justify-content: flex-end; position: sticky; z-index: 1000; top: 12%;">
     <button class="filter-button" @click="openFilterMenu">
       <i class="fa-solid fa-sliders"></i>Trier et filtrer
     </button></div>
