@@ -50,6 +50,7 @@ const step = ref(0);
 
 function validateCart() {
   step.value = 1;
+  window.scrollTo(0, 0);
 }
 
 function submitDeliveryForm() {
@@ -93,7 +94,7 @@ provide('submitDeliveryForm', submitDeliveryForm);
 </script>
 
 <template>
-  <div style="padding-left: 3%; display: flex; gap: 0px; height: 80vh; justify-content: space-evenly">
+  <div id="container">
     <!-- Step 0: Résumé de la commande -->
     <div v-if="step === 0" style="flex: 0.7 auto; border: 1px solid black; margin: 10px; padding-left: 20px;">
       <h2 class="form-title">Panier</h2>
@@ -286,10 +287,28 @@ button:hover {
   background-color: #45a049;
 }
 
-/* disable button */
-
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-</style>
+
+#container {
+  display: flex;
+  gap: 0px;
+  height: 80vh;
+  justify-content: space-evenly
+}
+
+@media (max-width: 1091px) {
+  #container {
+    flex-direction: column;
+  }
+
+  .form-container {
+    flex-direction: column;
+  }
+
+  #container {
+    display: contents;
+  }
+}</style>
