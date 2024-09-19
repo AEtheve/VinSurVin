@@ -49,7 +49,7 @@ def login(request):
             if not all([username, password]):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
             
-            if is_user_logged(request):
+            if is_anonymous_user(request):
                 guest_user = request.user
                 guest_cart = guest_user.get_cart()
                 guest_user.delete()
@@ -228,10 +228,15 @@ def delete_cart(request):
 def check_user_login(request):
     if isinstance(request.user, AnonymousUser):
         username = str(uuid.uuid4())
-        user = User.objects.create_user(username=username, is_anonymous_user=True)
+        user = User.objects.create_user(
+            username=username,
+            email=f"{username}@example.com",
+            password=User.objects.make_random_password(),
+            is_anonymous_user=True
+        )
         auth_login(request, user)
         return user
     return request.user
 
-def is_user_logged(request):
-    return not isinstance(request.user, AnonymousUser)
+def is_anonymous_user(request):
+    return request.user.is_anonymous_user
