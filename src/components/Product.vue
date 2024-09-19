@@ -252,7 +252,7 @@ function addToCart() {
 }
 
 .product-page {
-  padding: 3%;
+  margin: 31px;
   padding-left: 0;
 }
 

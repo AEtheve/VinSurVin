@@ -197,7 +197,7 @@ async function getOrders() {
         <form id="formLogin" method="POST">
           <h2>Connectez-vous</h2>
           Vous avez déjà un compte sur VinSurVin ?
-          <input type="text" name="username" placeholder="Adresse Mail" />
+          <input type="text" name="username" placeholder="Nom d'utilisateur" />
           <input type="password" name="password" placeholder="Mot de passe" />
           <input type="submit" value="Se connecter" />
 
