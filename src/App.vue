@@ -170,13 +170,14 @@ provide('removeProductFromCart', removeProductFromCart);
 }
 
 #cart_content {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   right: 0;
   background: white;
   padding: 20px;
   height: 100%;
-  width: 20vw;
   text-align: center;
 
   overflow-y: auto;
