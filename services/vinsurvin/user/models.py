@@ -123,7 +123,7 @@ class User(AbstractUser):
             }
         }
         if self.is_anonymous_user:
-            order['email'] = email
+            self.email = email
         if self.orders is None:
             self.orders = []
         total_price = sum(item['price'] * item['quantity'] for item in self.cart)
