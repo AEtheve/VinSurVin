@@ -71,6 +71,7 @@ const fetchProduct = async () => {
 
 fetchProduct();
 
+setInterval(fetchProduct, 2000);
 
 const quantity = ref(1);
 const showModal = ref(false);
