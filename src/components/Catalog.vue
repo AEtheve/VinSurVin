@@ -12,7 +12,7 @@ const maxPrice = ref(10000000);
 const currentPage = inject("currentPage");
 const totalPages = inject("totalPages");
 const filterSearch = inject("filterSearch");
-const type = ref('rouge');
+const type = ref('');
 const region = ref('');
 const appellation = ref('');
 const millesime = ref('');
@@ -155,6 +155,7 @@ function openFilterMenu() {
         <div>
           <label for="type">Type</label>
           <select name="type" id="type" v-model="type">
+            <option value=""></option>
             <option value="rouge">Rouge</option>
             <option value="blanc">Blanc</option>
             <option value="rosé">Rosé</option>
@@ -164,6 +165,7 @@ function openFilterMenu() {
         <div>
           <label for="region">Région</label>
           <select name="region" id="region" v-model="region">
+            <option value=""></option>
             <option value="bordeaux">Bordeaux</option>
             <option value="bourgogne">Bourgogne</option>
             <option value="alsace">Alsace</option>
@@ -174,6 +176,7 @@ function openFilterMenu() {
         <div>
           <label for="appellation">Appellation</label>
           <select name="appellation" id="appellation" v-model="appellation">
+            <option value=""></option>
             <option value="médoc">Médoc</option>
             <option value="saint-émilion">Saint-Émilion</option>
             <option value="pomerol">Pomerol</option>
@@ -184,6 +187,7 @@ function openFilterMenu() {
         <div>
           <label for="millesime">Millésime</label>
           <select name="millesime" id="millesime" v-model="appellation">
+            <option value=""></option>
             <option value="2023">2023</option>
             <option value="2022">2022</option>
             <option value="2021">2021</option>
@@ -197,6 +201,7 @@ function openFilterMenu() {
         <div>
           <label for="grape_variety">Cépage</label>
           <select name="grape_variety" id="grape_variety" v-model="grape_variety">
+            <option value=""></option>
             <option value="cabernet-sauvignon">Cabernet Sauvignon</option>
             <option value="merlot">Merlot</option>
             <option value="syrah">Syrah</option>
