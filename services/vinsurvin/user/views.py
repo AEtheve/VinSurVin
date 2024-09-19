@@ -51,7 +51,7 @@ def login(request):
             
             if is_anonymous_user(request):
                 guest_user = request.user
-                guest_cart = guest_user.get_cart()
+                guest_cart = guest_user.get_cart()  
                 guest_user.delete()
                 was_anonymous = True
             else:
@@ -239,4 +239,4 @@ def check_user_login(request):
     return request.user
 
 def is_anonymous_user(request):
-    return request.user.is_anonymous_user
+    return request.user.get_anonymous_user()
