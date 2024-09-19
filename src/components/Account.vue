@@ -41,20 +41,23 @@ onMounted(() => {
             registerFormError.value = "Un compte existe déjà avec ce nom d'utilisateur";
           }
           else {
+            loginFormError.value = "";
+            loginFormMessage.value = "";
+            registerFormError.value = "";
             registerFormMessage.value = "Votre compte a bien été créé";
             fetch(`//${window.location.hostname}:8000/user/login`, {
                 method: "POST",
                 credentials: "include",
                 mode: 'cors',
                 body: JSON.stringify({
-                  username: event.target.email.value,
+                  username: event.target.username.value,
                   password: event.target.password.value
                 })
               })
                 .then(response => response.json())
                 .then(data => {
                   if (data.error) {
-                    registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
+                    registerFormError.value = "Une erreur est survenue lors de la connexion";
                   } else {
                     localStorage.setItem('isConnected', 'true');
                     isLoading.value = true; 
@@ -85,9 +88,11 @@ onMounted(() => {
         .then(response => response.json())
         .then(data => {
           if (data.error) {
-            registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
+            loginFormMessage.value = "";
+            loginFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
           } else {
             localStorage.setItem('isConnected', 'true');
+            loginFormError.value = "";
             loginFormMessage.value = "Vous êtes connecté";
             isLoading.value = true; 
 
