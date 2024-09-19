@@ -198,7 +198,7 @@ function addToCart() {
           <button class="cart_button" @click="addToCart" :disabled="quantity > product.stock || isProcessing">
             <span v-if="isProcessing">Veuillez patienter...</span>
             <span v-else>Ajouter au panier</span>
-            <img v-if="isProcessing" src="/src/assets/gif.gif" alt="loading" class="loading-gif" />
+            <img v-if="isProcessing" src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/gif.gif" alt="loading" class="loading-gif" />
           </button>
         </div>
 

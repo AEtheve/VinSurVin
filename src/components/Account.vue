@@ -189,7 +189,7 @@ async function getOrders() {
 <template>
   <div>
     <div v-if="isLoading" class="loading-overlay">
-      <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
+      <img src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/gif2.gif" alt="Loading..." class="loading-spinner" />
     </div>
 
     <div v-if="!isConnected" id="account-forms">
@@ -220,7 +220,7 @@ async function getOrders() {
       </div>
 
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/wine_video.mp4" autoplay loop muted
+        <video src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/vigne.mp4" autoplay loop muted
           style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; background-color: black;"
           playsinline></video>
       </div>

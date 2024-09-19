@@ -186,7 +186,7 @@ const handleSubmit = () => {
 
 <template>
   <div v-if="showLoading" class="loading-overlay">
-    <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
+    <img src="https://vinsurvin-bucket.s3.eu-west-3.amazonaws.com/gif2.gif" alt="Loading..." class="loading-spinner" />
   </div>
   <div class="payment-container">
     <h2 class="form-title">2. Paiement sécurisé</h2>
@@ -309,12 +309,10 @@ button:disabled {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  /* Fond semi-transparent pour assombrir */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  /* Assurer que le GIF est au-dessus de tout le reste */
 }
 
 .loading-spinner {
