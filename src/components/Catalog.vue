@@ -6,9 +6,9 @@ import LowerPage from './LowerPage.vue';
 const products = ref(inject('productlist'));
 
 const showFilterMenu = ref(false);
-const rangemax = ref(1000);
+const rangemax = ref(20000);
 const minPrice = ref(0);
-const maxPrice = ref(10000000);
+const maxPrice = ref(20000);
 const currentPage = inject("currentPage");
 const totalPages = inject("totalPages");
 const filterSearch = inject("filterSearch");
@@ -144,12 +144,12 @@ function openFilterMenu() {
       <div class="filter-content">
         <div>
           <label for="min-price">Prix Min</label>
-          <input type="range" id="min-price" name="min-price" min="0" max="1000" step="100" v-model="minPrice">
+          <input type="range" id="min-price" name="min-price" min="0" max="20000" step="100" v-model="minPrice">
           <span class="price-display">{{ minPrice }}€</span>
         </div>
         <div>
           <label for="max-price">Prix Max</label>
-          <input type="range" id="max-price" name="max-price" min="0" max="1000" step="100" v-model="maxPrice">
+          <input type="range" id="max-price" name="max-price" min="0" max="20000" step="100" v-model="maxPrice">
           <span class="price-display">{{ maxPrice }}€</span>
         </div>
 
