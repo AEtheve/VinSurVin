@@ -178,7 +178,6 @@ provide('removeProductFromCart', removeProductFromCart);
   background: white;
   padding: 20px;
   height: 100%;
-  width: 20vw;
   text-align: center;
 
   overflow-y: auto;
