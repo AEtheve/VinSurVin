@@ -455,7 +455,7 @@ button:disabled {
   }
 
   .add-to-cart-container {
-    width: 100%;
+    display: contents;
   }
 }
 </style>
