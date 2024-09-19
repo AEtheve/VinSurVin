@@ -239,4 +239,7 @@ def check_user_login(request):
     return request.user
 
 def is_anonymous_user(request):
-    return request.user.get_anonymous_user()
+    try:
+        return request.user.get_anonymous_user()
+    except:
+        return False
