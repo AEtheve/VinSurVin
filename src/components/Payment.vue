@@ -226,8 +226,9 @@ const handleSubmit = () => {
 
 <style scoped>
 .payment-container {
-  max-width: 400px;
+  width: 100%;
   margin: 0 auto;
+  flex: 1;
   padding: 60px;
   background-color: #f9f9f9;
   border-radius: 10px;
