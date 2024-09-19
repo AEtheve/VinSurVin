@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { inject } from 'vue';
 import LowerPage from './LowerPage.vue';
-import Catalog from './Catalog.vue';
 </script>
 
 <template>

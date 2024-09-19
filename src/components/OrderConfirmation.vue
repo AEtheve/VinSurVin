@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import LowerPage from './LowerPage.vue';
 import { useRouter } from 'vue-router';
 

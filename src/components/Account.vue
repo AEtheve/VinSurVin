@@ -11,10 +11,12 @@ const isLoading = ref(false);
 const isConnected = inject('isConnected');
 
 const accountInfo = ref({});
+const orders = ref([]);
 
 onMounted(() => {
   if (isConnected.value) {
     getInfos();
+    getOrders();
   } else {
     document.getElementById("formRegister").addEventListener("submit", function (event) {
       event.preventDefault();
@@ -27,7 +29,7 @@ onMounted(() => {
         body: JSON.stringify({
           email: event.target.email.value,
           password: event.target.password.value,
-          username: event.target.email.value
+          username: event.target.username.value
         })
       })
         .then(response => response.json())
@@ -39,20 +41,23 @@ onMounted(() => {
             registerFormError.value = "Un compte existe déjà avec ce nom d'utilisateur";
           }
           else {
+            loginFormError.value = "";
+            loginFormMessage.value = "";
+            registerFormError.value = "";
             registerFormMessage.value = "Votre compte a bien été créé";
             fetch(`//${window.location.hostname}:8000/user/login`, {
                 method: "POST",
                 credentials: "include",
                 mode: 'cors',
                 body: JSON.stringify({
-                  username: event.target.email.value,
+                  username: event.target.username.value,
                   password: event.target.password.value
                 })
               })
                 .then(response => response.json())
                 .then(data => {
                   if (data.error) {
-                    registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
+                    registerFormError.value = "Une erreur est survenue lors de la connexion";
                   } else {
                     localStorage.setItem('isConnected', 'true');
                     isLoading.value = true; 
@@ -83,9 +88,11 @@ onMounted(() => {
         .then(response => response.json())
         .then(data => {
           if (data.error) {
-            registerFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
+            loginFormMessage.value = "";
+            loginFormError.value = "Nom d'utilisateur ou mot de passe incorrect";
           } else {
             localStorage.setItem('isConnected', 'true');
+            loginFormError.value = "";
             loginFormMessage.value = "Vous êtes connecté";
             isLoading.value = true; 
 
@@ -125,6 +132,58 @@ function logout() {
   localStorage.removeItem('isConnected');
   location.reload();
 }
+
+async function getProductName(id:number) {
+  const response = await fetch(`//${window.location.hostname}:8000/product/${id}`, {
+    method: "GET",
+    credentials: "include",
+    mode: 'cors',
+  });
+
+  const data = await response.json();
+  return data.fields.name;
+}
+async function getOrders() {
+  try {
+    const response = await fetch(`//${window.location.hostname}:8000/get-orders/`, {
+      method: "GET",
+      credentials: "include",
+      mode: 'cors',
+    });
+    const data = await response.json();
+    console.log(data);
+    if (Array.isArray(data.orders)) {
+      orders.value = await Promise.all(data.orders.map(async order => {
+        const orderlines = await Promise.all(order.order_lines.map(async orderline => {
+          const name = await getProductName(orderline.product_id);
+          console.log("name", name);
+          return {
+            id: orderline.product_id,
+            name,
+            quantity: orderline.quantity,
+            price: orderline.price,
+          };
+        }));
+        return {
+          id: order.id,
+          date: formatDate(order.created_at),
+          total: order.total_price,
+          status: order.status === "in progress" ? "En cours" : "Terminée",
+          address: {
+            street: order.address.street,
+            city: order.address.city,
+            zip_code: order.address.zip_code,
+          },
+          orderlines,
+        };
+      }));
+    } else {
+      console.error('Aucune commande trouvée:', data);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des commandes:', error);
+  }
+}
 </script>
 
 <template>
@@ -134,12 +193,11 @@ function logout() {
     </div>
     
     <div v-if="!isConnected" id="account-forms">
-      <!-- Conteneur des deux formulaires et du diviseur -->
       <div id="form_account" class="form-wrapper">
         <form id="formLogin" method="POST">
           <h2>Connectez-vous</h2>
           Vous avez déjà un compte sur VinSurVin ?
-          <input type="text" name="username" placeholder="Nom d'utilisateur" />
+          <input type="text" name="username" placeholder="Adresse Mail" />
           <input type="password" name="password" placeholder="Mot de passe" />
           <input type="submit" value="Se connecter" />
 
@@ -149,10 +207,10 @@ function logout() {
 
         <div class="divider"></div>
 
-        <!-- Formulaire d'inscription -->
         <form id="formRegister" method="POST">
           <h2>Nouveau client ?</h2>
-          <input type="text" name="email" placeholder="Adresse email" />
+          <input type="text" name="email" placeholder="Adresse Mail" />
+          <input type="text" name="username" placeholder="Nom d'utilisateur" />
           <input type="password" name="password" placeholder="Mot de passe" />
           <input type="submit" value="Poursuivre l'inscription" />
 
@@ -169,33 +227,54 @@ function logout() {
 
     </div>
 
-    <div v-else class="account-container">
-      <h1 class="account-title">Mon compte</h1>
-      <div class="account-info">
-        <div class="account-info-row">
-          <span class="account-info-label">Nom d'utilisateur:</span>
-          <span class="account-info-value">{{ accountInfo.username }}</span>
+    <div v-else class="account-wrapper">
+      <div class="account-container">
+        <h1 class="account-title">Mon compte</h1>
+        <div class="account-info">
+          <div class="account-info-row">
+            <span class="account-info-label">Nom d'utilisateur:</span>
+            <span class="account-info-value">{{ accountInfo.username }}</span>
+          </div>
+          <div class="account-info-row">
+            <span class="account-info-label">Email:</span>
+            <span class="account-info-value">{{ accountInfo.email }}</span>
+          </div>
+          <div class="account-info-row">
+            <span class="account-info-label">Date de création:</span>
+            <span class="account-info-value">{{ accountInfo.createdAt }}</span>
+          </div>
+          <div class="account-info-row">
+            <span class="account-info-label">Dernière connexion:</span>
+            <span class="account-info-value">{{ accountInfo.lastLogin }}</span>
+          </div>
         </div>
-        <div class="account-info-row">
-          <span class="account-info-label">Email:</span>
-          <span class="account-info-value">{{ accountInfo.email }}</span>
-        </div>
-        <div class="account-info-row">
-          <span class="account-info-label">Date de création:</span>
-          <span class="account-info-value">{{ accountInfo.createdAt }}</span>
-        </div>
-        <div class="account-info-row">
-          <span class="account-info-label">Dernière connexion:</span>
-          <span class="account-info-value">{{ accountInfo.lastLogin }}</span>
+        <div style="display: flex; justify-content: center;">
+          <button @click="logout">Se déconnecter</button>
         </div>
       </div>
-      <div style="display: flex; justify-content: center;">
-        <button @click="logout">Se déconnecter</button>
+      <div class="account-histo">
+        <h1 class="account-title">Historique de commandes</h1>
+        <ul>
+          <li v-for="order in orders" :key="order.id">
+            <div>Date de la commande : {{ order.date }}</div>
+            <div>Prix Total : {{ order.total }} €</div>
+            <div>Status : {{ order.status }}</div>
+            <div>Adresse de livraison : {{ order.address.street }}</div>
+            <div>Ville : {{ order.address.city }}</div>
+            <div>Code Postale : {{ order.address.zip_code }}</div>
+            <ul>
+              <li v-for="orderline in order.orderlines" :key="orderline.id">
+                <div>Produit : {{ orderline.name }}</div>
+                <div>Quantité : {{ orderline.quantity }}</div>
+                <div>Prix : {{ orderline.price }} €</div>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
-
-    <LowerPage></LowerPage>
   </div>
+  <LowerPage></LowerPage>
 </template>
 
 <style scoped>
@@ -276,13 +355,28 @@ input[type=submit] {
   height: 300px;
 }
 
+.account-wrapper {
+  display: flex; 
+  justify-content: space-between; 
+  gap: 30px; 
+  padding: 30px;
+}
+
 .account-container {
   background: #f9f9f9;
   border-radius: 10px;
   padding: 30px;
-  padding-bottom: 0;
   max-width: 600px;
-  margin: 0 auto;
+  flex: 1; 
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-histo {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 600px;
+  flex: 1; 
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
