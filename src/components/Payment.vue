@@ -35,40 +35,58 @@ function getCurrentYear() {
   return new Date().getFullYear() % 100;
 }
 
-function validateCardNumber() {
+function validateCardNumber(messagePopup) {
   if (cardNumber.value.replace(/\s+/g, '').length !== 16) {
-    cardNumberError.value = 'Le numéro de carte doit comporter 16 chiffres.';
+    if (messagePopup) {
+      cardNumberError.value = 'Le numéro de carte doit comporter 16 chiffres.';
+    }
+    isPaymentFormValid.value = false;
   } else {
     cardNumberError.value = '';
   }
 }
 
-function validateExpiryDate() {
+function validateExpiryDate(messagePopup) {
   const [month, year] = expiryDate.value.split('/').map(Number);
   const currentYear = getCurrentYear();
 
   if (!month || month < 1 || month > 12) {
-    expiryDateError.value = "Le mois d'expiration doit être entre 01 et 12.";
+    if (messagePopup) {
+      expiryDateError.value = "Le mois d'expiration doit être entre 01 et 12.";
+    }
+    isPaymentFormValid.value = false;
   } else if (!year || year < currentYear) {
-    expiryDateError.value = `L'année d'expiration doit être supérieure ou égale à ${currentYear}.`;
+    if (messagePopup) {
+      expiryDateError.value = `L'année d'expiration doit être supérieure ou égale à ${currentYear}.`;
+    }
+    isPaymentFormValid.value = false;
   } else {
     expiryDateError.value = '';
   }
 }
 
-function validateCVV() {
+function validateCVV(messagePopup) {
   if (!/^\d+$/.test(cvv.value)) {
-    cvvError.value = 'Le CVV doit être un nombre à 3 chiffres.';
+    if (messagePopup) {
+      cvvError.value = 'Le CVV doit être un nombre à 3 chiffres.';
+    }
+    isPaymentFormValid.value = false;
   } else if (cvv.value.length !== 3) {
-    cvvError.value = 'Le CVV doit comporter 3 chiffres.';
+    if (messagePopup) {
+      cvvError.value = 'Le CVV doit comporter 3 chiffres.';
+    }
+    isPaymentFormValid.value = false;
   } else {
     cvvError.value = '';
   }
 }
 
-function validateName() {
+function validateName(messagePopup) {
   if (!name.value) {
-    nameError.value = 'Le nom sur la carte est obligatoire.';
+    if (messagePopup) {
+      nameError.value = 'Le nom sur la carte est obligatoire.';
+    }
+    isPaymentFormValid.value = false;
   } else {
     nameError.value = '';
   }
@@ -137,7 +155,7 @@ function createOrder() {
       handleSubmit();
     });
   }
-  
+
 }
 
 function formatExpiryDate(event: Event) {
@@ -176,10 +194,17 @@ const handleSubmit = () => {
 
     setTimeout(() => {
       router.push('/confirmation');
-    }, 1000); 
-  }, 2000); 
+    }, 1000);
+  }, 2000);
 };
 
+function checkInputs() {
+  validateCardNumber(false);
+  validateExpiryDate(false);
+  validateCVV(false);
+  validateName(false);
+
+}
 
 </script>
 
@@ -191,7 +216,7 @@ const handleSubmit = () => {
   <div class="payment-container">
     <h2 class="form-title">2. Paiement sécurisé</h2>
 
-    <form>
+    <form @input="checkInputs">
       <div class="form-group">
         <label class="form-label" for="cardNumber">Numéro de carte *:</label>
         <input type="text" id="cardNumber" v-model="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required
