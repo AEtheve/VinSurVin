@@ -53,6 +53,7 @@ function applyFilters() {
 
 
 const fetchProduct = async (page = 1) => {
+  window.scrollTo(0, 0);
   let data = [];
   let response: Response;
   if (filterSearch.value && isActive===true) {

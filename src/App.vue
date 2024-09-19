@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, provide, computed } from 'vue';
 const cartOpen = ref(false);
-const productsInCard = ref(JSON.parse(localStorage.getItem('cart') || '') || []);
+const productsInCard = ref(JSON.parse(localStorage.getItem('cart')) || []);
 const isCartEmpty = computed(() => productsInCard.value.length === 0);
 const dialogMenuMobile = ref(false);
 const productlist = ref([]);
