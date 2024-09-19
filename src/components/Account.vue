@@ -537,5 +537,16 @@ ul li {
     flex-direction: column;
     align-items: center;
   }
+  .form-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  .divider {
+    display: none;
+  }
+
+  #account-forms{
+    height: 660px;
+  }
 }
 </style>
