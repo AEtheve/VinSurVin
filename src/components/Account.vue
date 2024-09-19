@@ -6,7 +6,7 @@ const registerFormMessage = ref("");
 const registerFormError = ref("");
 const loginFormMessage = ref("");
 const loginFormError = ref("");
-const isLoading = ref(false); 
+const isLoading = ref(false);
 
 const isConnected = inject('isConnected');
 
@@ -36,7 +36,7 @@ onMounted(() => {
         .then(data => {
           if (data.error == "Email already exists") {
             registerFormError.value = "Un compte existe déjà avec cette adresse email";
-          } 
+          }
           if (data.error == "Username already exists") {
             registerFormError.value = "Un compte existe déjà avec ce nom d'utilisateur";
           }
@@ -46,28 +46,28 @@ onMounted(() => {
             registerFormError.value = "";
             registerFormMessage.value = "Votre compte a bien été créé";
             fetch(`//${window.location.hostname}:8000/user/login`, {
-                method: "POST",
-                credentials: "include",
-                mode: 'cors',
-                body: JSON.stringify({
-                  username: event.target.username.value,
-                  password: event.target.password.value
-                })
+              method: "POST",
+              credentials: "include",
+              mode: 'cors',
+              body: JSON.stringify({
+                username: event.target.username.value,
+                password: event.target.password.value
               })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    registerFormError.value = "Une erreur est survenue lors de la connexion";
-                  } else {
-                    localStorage.setItem('isConnected', 'true');
-                    isLoading.value = true; 
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  registerFormError.value = "Une erreur est survenue lors de la connexion";
+                } else {
+                  localStorage.setItem('isConnected', 'true');
+                  isLoading.value = true;
 
-                    setTimeout(() => {
-                      location.href = "/boutique";
-                    }, 1000); 
-                  }
-                })
-            
+                  setTimeout(() => {
+                    location.href = "/boutique";
+                  }, 1000);
+                }
+              })
+
           }
         })
     });
@@ -94,11 +94,11 @@ onMounted(() => {
             localStorage.setItem('isConnected', 'true');
             loginFormError.value = "";
             loginFormMessage.value = "Vous êtes connecté";
-            isLoading.value = true; 
+            isLoading.value = true;
 
             setTimeout(() => {
               location.reload();
-            }, 1000); 
+            }, 1000);
           }
         })
     });
@@ -133,7 +133,7 @@ function logout() {
   location.reload();
 }
 
-async function getProductName(id:number) {
+async function getProductInfos(id: number) {
   const response = await fetch(`//${window.location.hostname}:8000/product/${id}`, {
     method: "GET",
     credentials: "include",
@@ -141,7 +141,7 @@ async function getProductName(id:number) {
   });
 
   const data = await response.json();
-  return data.fields.name;
+  return data.fields;
 }
 async function getOrders() {
   try {
@@ -155,11 +155,11 @@ async function getOrders() {
     if (Array.isArray(data.orders)) {
       orders.value = await Promise.all(data.orders.map(async order => {
         const orderlines = await Promise.all(order.order_lines.map(async orderline => {
-          const name = await getProductName(orderline.product_id);
-          console.log("name", name);
+          const infos = await getProductInfos(orderline.product_id);
           return {
             id: orderline.product_id,
-            name,
+            name: infos.name,
+            image: infos.image,
             quantity: orderline.quantity,
             price: orderline.price,
           };
@@ -191,7 +191,7 @@ async function getOrders() {
     <div v-if="isLoading" class="loading-overlay">
       <img src="/src/assets/gif2.gif" alt="Loading..." class="loading-spinner" />
     </div>
-    
+
     <div v-if="!isConnected" id="account-forms">
       <div id="form_account" class="form-wrapper">
         <form id="formLogin" method="POST">
@@ -254,23 +254,28 @@ async function getOrders() {
       </div>
       <div class="account-histo">
         <h1 class="account-title">Historique de commandes</h1>
-        <ul>
-          <li v-for="order in orders" :key="order.id">
-            <div>Date de la commande : {{ order.date }}</div>
-            <div>Prix Total : {{ order.total }} €</div>
-            <div>Status : {{ order.status }}</div>
-            <div>Adresse de livraison : {{ order.address.street }}</div>
-            <div>Ville : {{ order.address.city }}</div>
-            <div>Code Postale : {{ order.address.zip_code }}</div>
-            <ul>
-              <li v-for="orderline in order.orderlines" :key="orderline.id">
-                <div>Produit : {{ orderline.name }}</div>
-                <div>Quantité : {{ orderline.quantity }}</div>
-                <div>Prix : {{ orderline.price }} €</div>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <div v-for="order in orders" :key="order.id" class="order-card">
+          <details>
+            <summary>
+              Commande du {{ order.date }} - {{ order.status }}
+            </summary>
+            <div class="order-address">
+              <strong>Adresse de livraison :</strong> {{ order.address.street }}, {{ order.address.city }} {{ order.address.zip_code }}
+            </div>
+            <div class="order-products">
+              <div v-for="orderline in order.orderlines" :key="orderline.id" class="product-card">
+                <div class="product-card-content">
+                  <img :src="orderline.image" :alt="orderline.name" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px;" />
+                  <div>
+                    <strong>{{ orderline.name }}</strong>
+                    <p>Quantité: {{ orderline.quantity }}</p>
+                    <p>Prix: {{ orderline.price }} €</p>
+                  </div>
+                  </div>
+              </div>
+            </div>
+          </details>
+        </div>
       </div>
     </div>
   </div>
@@ -313,13 +318,13 @@ form input[type="submit"]:hover {
   background: white;
   color: #2c2c2c;
   border: 1px solid #2c2c2c;
-  transform: scale(1.05); 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 form input[type="submit"]:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
   border: 1px solid #2c2c2c;
 }
 
@@ -356,9 +361,8 @@ input[type=submit] {
 }
 
 .account-wrapper {
-  display: flex; 
-  justify-content: space-between; 
-  gap: 30px; 
+  display: flex;
+  justify-content: space-evenly;
   padding: 30px;
 }
 
@@ -367,7 +371,8 @@ input[type=submit] {
   border-radius: 10px;
   padding: 30px;
   max-width: 600px;
-  flex: 1; 
+  width: 100%;
+  flex: 1;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -376,7 +381,7 @@ input[type=submit] {
   border-radius: 10px;
   padding: 30px;
   max-width: 600px;
-  flex: 1; 
+  flex: 1;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -453,5 +458,83 @@ button:hover {
 .loading-spinner {
   width: 100px;
   height: 100px;
+}
+
+details {
+  margin-bottom: 15px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+}
+
+summary:hover {
+  color: #666;
+}
+
+details[open] summary {
+  color: #000;
+}
+
+ul {
+  list-style: none;
+  padding-left: 20px;
+}
+
+ul li {
+  margin-bottom: 10px;
+}
+
+.order-card {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-address {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.order-products {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.product-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-card summary {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.product-card summary:hover {
+  color: #666;
+}
+
+.product-card-content {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+@media (max-width: 1091px) {
+  .account-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
