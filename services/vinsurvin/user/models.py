@@ -153,3 +153,6 @@ class User(AbstractUser):
             'lastLogin': self.last_login,
             'isAnonymousUser': self.is_anonymous_user
         }
+    
+    def get_anonymous_user(self):
+        return self.is_anonymous_user

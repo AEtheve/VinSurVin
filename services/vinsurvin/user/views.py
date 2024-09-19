@@ -228,10 +228,15 @@ def delete_cart(request):
 def check_user_login(request):
     if isinstance(request.user, AnonymousUser):
         username = str(uuid.uuid4())
-        user = User.objects.create_user(username=username, is_anonymous_user=True)
+        user = User.objects.create_user(
+            username=username,
+            email=f"{username}@example.com",
+            password=User.objects.make_random_password(),
+            is_anonymous_user=True
+        )
         auth_login(request, user)
         return user
     return request.user
 
 def is_anonymous_user(request):
-    return isinstance(request.user, AnonymousUser)
+    return request.user.is_anonymous_user
