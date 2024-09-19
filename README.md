@@ -19,7 +19,6 @@ touch .env
 ```
 
 4. Copier et modifier le contenu du fichier `.env.example` dans le fichier `.env`
-```bash
 
 5. Exécuter les conteneurs Docker
 ```bash
